@@ -1,0 +1,105 @@
+[
+  {
+    "id": 0,
+    "timestamp": "2026-02-04T13:24:07.858476",
+    "data": {
+      "message": "Genesis Block - CloudTwin AI Compliance Audit Chain",
+      "version": "1.0.0"
+    },
+    "previous_hash": "0",
+    "current_hash": "d894de287307c6e646599a69ef054fe0bf9c157e46d2d396232d320dbe326b3d"
+  },
+  {
+    "id": 1,
+    "timestamp": "2026-02-04T19:50:55.943758",
+    "resource_name": "my-basic-bucket-12345",
+    "resource_type": "s3_bucket",
+    "compliance_score": 33.33,
+    "checks_passed": 1,
+    "checks_total": 3,
+    "check_details": {
+      "encryption": {
+        "status": "PASS",
+        "message": "Server-side encryption is enabled",
+        "severity": "high",
+        "remediation": null
+      },
+      "versioning": {
+        "status": "FAIL",
+        "message": "Bucket versioning is NOT enabled",
+        "severity": "medium",
+        "remediation": "Enable versioning to protect against deletions"
+      },
+      "public_access": {
+        "status": "FAIL",
+        "message": "Public access block NOT configured",
+        "severity": "critical",
+        "remediation": "Enable all public access block settings"
+      }
+    },
+    "previous_hash": "d894de287307c6e646599a69ef054fe0bf9c157e46d2d396232d320dbe326b3d",
+    "current_hash": "5cb3ae8dea1b709b94db52fcb795e4696e762cb87e4df0632b1f9d38af311f98"
+  },
+  {
+    "id": 2,
+    "timestamp": "2026-02-04T19:51:11.316005",
+    "resource_name": "my-secure-bucket-67890",
+    "resource_type": "s3_bucket",
+    "compliance_score": 100.0,
+    "checks_passed": 3,
+    "checks_total": 3,
+    "check_details": {
+      "encryption": {
+        "status": "PASS",
+        "message": "Server-side encryption is enabled",
+        "severity": "high",
+        "remediation": null
+      },
+      "versioning": {
+        "status": "PASS",
+        "message": "Bucket versioning is enabled",
+        "severity": "medium",
+        "remediation": null
+      },
+      "public_access": {
+        "status": "PASS",
+        "message": "Public access is fully blocked",
+        "severity": "critical",
+        "remediation": null
+      }
+    },
+    "previous_hash": "5cb3ae8dea1b709b94db52fcb795e4696e762cb87e4df0632b1f9d38af311f98",
+    "current_hash": "9cd1e0747c58aaca4822fcc3350440550bb7288fda7f73eda194c1acbc78f6b5"
+  },
+  {
+    "id": 3,
+    "timestamp": "2026-02-05T09:36:14.935196",
+    "resource_name": "my-basic-bucket-12345",
+    "resource_type": "s3_bucket",
+    "compliance_score": 33.33,
+    "checks_passed": 1,
+    "checks_total": 3,
+    "check_details": {
+      "encryption": {
+        "status": "PASS",
+        "message": "Server-side encryption is enabled",
+        "severity": "high",
+        "remediation": null
+      },
+      "versioning": {
+        "status": "FAIL",
+        "message": "Bucket versioning is NOT enabled",
+        "severity": "medium",
+        "remediation": "Enable versioning to protect against deletions"
+      },
+      "public_access": {
+        "status": "FAIL",
+        "message": "Public access block NOT configured",
+        "severity": "critical",
+        "remediation": "Enable all public access block settings"
+      }
+    },
+    "previous_hash": "9cd1e0747c58aaca4822fcc3350440550bb7288fda7f73eda194c1acbc78f6b5",
+    "current_hash": "3ae4ca277e073c1ad5e4d09a049165bfd65c388113cda484359261a92342a3b0"
+  }
+]

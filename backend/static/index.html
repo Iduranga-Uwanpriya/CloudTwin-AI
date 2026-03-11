@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudTwin AI - Cloud Compliance Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .upload-section {
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            padding: 15px 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .file-label:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .file-name {
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        button {
+            background: #764ba2;
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        button:hover:not(:disabled) {
+            background: #653a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .bucket-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .bucket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .bucket-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .compliance-score {
+            font-size: 28px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+        
+        .score-high { background: #d4edda; color: #155724; }
+        .score-medium { background: #fff3cd; color: #856404; }
+        .score-low { background: #f8d7da; color: #721c24; }
+        
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+        }
+        
+        .check-pass { border-left-color: #28a745; }
+        .check-fail { border-left-color: #dc3545; }
+        
+        .check-status {
+            font-weight: bold;
+            margin-right: 15px;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        
+        .status-pass { background: #28a745; color: white; }
+        .status-fail { background: #dc3545; color: white; }
+        
+        .check-message {
+            flex: 1;
+            color: #555;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .recommendations {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .recommendations h4 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .recommendations li {
+            margin-left: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☁️ CloudTwin AI</h1>
+        <p class="subtitle">Automated AWS Infrastructure Compliance Checker</p>
+        
+        <div class="upload-section">
+            <label for="tfFile" class="file-label">
+                📁 Choose Terraform File
+            </label>
+            <input type="file" id="tfFile" accept=".tf">
+            <div class="file-name" id="fileName">No file selected</div>
+            
+            <button onclick="deployAndCheck()" id="deployBtn" disabled>
+                🚀 Deploy & Check Compliance
+            </button>
+        </div>
+        
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        // Handle file selection
+        document.getElementById('tfFile').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'No file selected';
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('deployBtn').disabled = !e.target.files[0];
+        });
+
+        async function deployAndCheck() {
+            const fileInput = document.getElementById('tfFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a Terraform file');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">⏳ Deploying infrastructure to LocalStack...</div>';
+            
+            // Deploy
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const deployRes = await fetch('/api/v1/deploy/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const deployData = await deployRes.json();
+                console.log('Deploy response:', deployData);
+                
+                if (deployData.status !== 'success') {
+                    resultsDiv.innerHTML = `<div class="error">❌ ${deployData.message || 'Deployment failed'}</div>`;
+                    return;
+                }
+                
+                if (!deployData.deployed_resources || deployData.deployed_resources.length === 0) {
+                    resultsDiv.innerHTML = `<div class="error">❌ No resources were deployed. Check your Terraform file.</div>`;
+                    return;
+                }
+                
+                resultsDiv.innerHTML = '<div class="loading">✅ Deployed! Checking compliance...</div>';
+                
+                // Check compliance for each deployed bucket
+                let html = '';
+                
+                for (let bucketName of deployData.deployed_resources) {
+                    try {
+                        const checkRes = await fetch(`/api/v1/compliance/${bucketName}`);
+                        
+                        if (!checkRes.ok) {
+                            throw new Error(`Failed to check compliance for ${bucketName}`);
+                        }
+                        
+                        const checkData = await checkRes.json();
+                        console.log('Compliance response:', checkData);
+                        
+                        html += renderBucketCard(checkData);
+                    } catch (err) {
+                        console.error('Error checking compliance:', err);
+                        html += `<div class="error">❌ Failed to check compliance for ${bucketName}: ${err.message}</div>`;
+                    }
+                }
+                
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function renderBucketCard(data) {
+            if (!data || !data.checks) {
+                return '<div class="error">❌ Invalid compliance data received</div>';
+            }
+            
+            const scoreClass = data.compliance_score >= 80 ? 'score-high' : 
+                              data.compliance_score >= 50 ? 'score-medium' : 'score-low';
+            
+            let checksHtml = '';
+            
+            try {
+                const entries = Object.entries(data.checks);
+                
+                for (let [checkName, checkResult] of entries) {
+                    if (!checkResult) continue;
+                    
+                    const statusClass = checkResult.status === 'PASS' ? 'status-pass' : 'status-fail';
+                    const checkClass = checkResult.status === 'PASS' ? 'check-pass' : 'check-fail';
+                    
+                    checksHtml += `
+                        <div class="check-item ${checkClass}">
+                            <span class="check-status ${statusClass}">${checkResult.status || 'UNKNOWN'}</span>
+                            <span class="check-message">${checkResult.message || 'No message'}</span>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error('Error rendering checks:', err);
+                checksHtml = '<div class="error">Error rendering compliance checks</div>';
+            }
+            
+            let recommendationsHtml = '';
+            if (data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+                recommendationsHtml = `
+                    <div class="recommendations">
+                        <h4>📋 Recommendations:</h4>
+                        <ul>
+                            ${data.recommendations.map(r => `<li>${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="bucket-card">
+                    <div class="bucket-header">
+                        <div class="bucket-name">🪣 ${data.resource_name || 'Unknown'}</div>
+                        <div class="compliance-score ${scoreClass}">
+                            ${(data.compliance_score || 0).toFixed(0)}%
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px; color: #666; font-weight: 600;">
+                        ${data.summary || 'No summary available'}
+                    </div>
+                    ${checksHtml}
+                    ${recommendationsHtml}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
