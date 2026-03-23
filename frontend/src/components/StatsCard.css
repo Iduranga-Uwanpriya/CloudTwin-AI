@@ -1,0 +1,37 @@
+.stats-card {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 18px 20px;
+  min-width: 160px;
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stats-title {
+  color: #8b949e;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.stats-icon {
+  font-size: 1.1rem;
+}
+
+.stats-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stats-sub {
+  color: #484f58;
+  font-size: 0.75rem;
+}

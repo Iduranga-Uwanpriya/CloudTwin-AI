@@ -21,9 +21,9 @@ class Settings:
     
     # ==================== PATHS ====================
     BASE_DIR = Path(__file__).parent.parent.parent
-    BLOCKCHAIN_DIR = BASE_DIR / "blockchain-audit"
+    BLOCKCHAIN_DIR = BASE_DIR / "blockchain_audit"
     BLOCKCHAIN_LOG_FILE = BLOCKCHAIN_DIR / "audit_logs.json"
-    AI_ENGINE_DIR = BASE_DIR / "ai-engine"
+    AI_ENGINE_DIR = BASE_DIR / "ai_engine"
     AI_MODELS_DIR = AI_ENGINE_DIR / "saved_models"
     DIGITAL_TWIN_DIR = BASE_DIR / "digital-twin"
     TERRAFORM_TEMPLATES_DIR = DIGITAL_TWIN_DIR / "terraform_templates"

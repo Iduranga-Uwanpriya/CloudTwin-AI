@@ -24,7 +24,7 @@ Each block contains:
 
 ### 2. Adding Logs
 ```python
-from blockchain-audit.hash_chain import blockchain_logger
+from blockchain_audit.hash_chain import blockchain_logger
 
 blockchain_logger.add_compliance_log(
     resource_name="my-bucket",
@@ -59,7 +59,7 @@ else:
 
 ## Storage
 
-Logs stored in: `blockchain-audit/audit_logs.json`
+Logs stored in: `blockchain_audit/audit_logs.json`
 
 ## Security
 

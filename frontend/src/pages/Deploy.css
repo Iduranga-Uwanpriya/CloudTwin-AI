@@ -1,0 +1,121 @@
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.arch-card {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.arch-icon {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.arch-title {
+  color: #58a6ff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.arch-desc {
+  color: #8b949e;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.deploy-section, .reports-section {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.deploy-section h3, .reports-section h3 {
+  color: #c9d1d9;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.status-panel {
+  margin-bottom: 14px;
+}
+
+.deploy-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.deploy-status.deployed { background: #0d2016; color: #3fb950; }
+.deploy-status.idle     { background: #21262d; color: #8b949e; }
+
+.resource-list {
+  padding-left: 16px;
+  margin: 6px 0;
+}
+
+.resource-list li {
+  color: #8b949e;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.primary   { background: #1f6feb; color: #fff; }
+.btn.secondary { background: #21262d; color: #c9d1d9; }
+.btn.danger    { background: #3a1a1a; color: #f85149; }
+
+.success-msg {
+  background: #0d2016;
+  border: 1px solid #3fb950;
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #3fb950;
+  font-size: 0.85rem;
+}
+
+.error-msg {
+  background: #3a1a1a;
+  border: 1px solid #f85149;
+  border-radius: 6px;
+  padding: 10px 14px;
+  color: #f85149;
+  font-size: 0.85rem;
+}
+
+.reports-desc {
+  color: #8b949e;
+  font-size: 0.82rem;
+  margin: 0 0 12px;
+}

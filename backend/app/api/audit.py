@@ -80,7 +80,7 @@ def get_blockchain_stats():
         stats = blockchain_logger.get_chain_stats()
         return {
             "blockchain_statistics": stats,
-            "storage_location": "blockchain-audit/audit_logs.json"
+            "storage_location": "blockchain_audit/audit_logs.json"
         }
     except Exception as e:
         print(f"Error in get_blockchain_stats: {e}")

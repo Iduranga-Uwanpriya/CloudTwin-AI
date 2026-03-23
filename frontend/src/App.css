@@ -1,0 +1,39 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+/* shared .page styles referenced by each page */
+.page {
+  padding: 28px 32px;
+  max-width: 1200px;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #c9d1d9;
+  margin: 0 0 4px;
+}
+
+.page-sub {
+  color: #484f58;
+  font-size: 0.85rem;
+  margin: 0 0 24px;
+}

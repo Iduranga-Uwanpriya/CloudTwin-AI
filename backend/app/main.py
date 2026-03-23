@@ -3,8 +3,6 @@ CloudTwin AI - Main Application Entry Point
 Ties all components together and starts the FastAPI server
 """
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.app.config import settings
@@ -12,7 +10,11 @@ from backend.app.models.schemas import HealthCheck
 from backend.app.services.digital_twin import test_localstack_connection
 
 # Import API routers
-from backend.app.api import deploy, compliance, audit, anomaly
+from backend.app.api import deploy, compliance, audit, anomaly, reports, auth, aws_accounts, scanner
+
+# Database
+from backend.app.db.models import Base
+from backend.app.db.session import engine
 
 # ==================== CREATE APP ====================
 app = FastAPI(
@@ -33,35 +35,30 @@ app.add_middleware(
 )
 
 # ==================== INCLUDE API ROUTERS ====================
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(aws_accounts.router, prefix="/api/v1")
+app.include_router(scanner.router, prefix="/api/v1")
 app.include_router(deploy.router, prefix="/api/v1")
 app.include_router(compliance.router, prefix="/api/v1")
 app.include_router(audit.router, prefix="/api/v1")
 app.include_router(anomaly.router, prefix="/api/v1")
-
-# ==================== STATIC FILES ====================
-try:
-    app.mount("/static", StaticFiles(directory="backend/static"), name="static")
-except:
-    pass  # Static directory might not exist yet
+app.include_router(reports.router, prefix="/api/v1")
 
 # ==================== ROOT ENDPOINTS ====================
 
 @app.get("/")
 def root():
     """
-    Root endpoint - Serves web interface
+    Root endpoint
     """
-    try:
-        return FileResponse("backend/static/index.html")
-    except:
-        return {
-            "service": settings.APP_NAME,
-            "version": settings.APP_VERSION,
-            "status": "running",
-            "message": "CloudTwin AI Backend is operational",
-            "api_docs": "/docs",
-            "note": "Web interface not yet configured"
-        }
+    return {
+        "service": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "status": "running",
+        "message": "CloudTwin AI Backend is operational",
+        "api_docs": "/docs",
+        "frontend": "http://localhost:3000"
+    }
 
 @app.get("/health", response_model=HealthCheck)
 def health_check():
@@ -94,14 +91,16 @@ def system_info():
             "deploy": "/api/v1/deploy",
             "compliance": "/api/v1/compliance",
             "audit": "/api/v1/audit",
-            "anomaly": "/api/v1/anomaly"
+            "anomaly": "/api/v1/anomaly",
+            "reports": "/api/v1/reports"
         },
         "features": {
             "terraform_parsing": "✅ Working",
             "localstack_deployment": "✅ Working",
-            "compliance_checking": "✅ Working",
-            "blockchain_audit": "🔄 In Progress",
-            "ai_anomaly_detection": "⏳ Planned"
+            "compliance_checking": "✅ Working (ISO 27001 & NIST 800-53)",
+            "ai_anomaly_detection": "✅ Working (Isolation Forest, One-Class SVM, Autoencoder)",
+            "blockchain_audit": "✅ Working (SHA-256 + Merkle Tree)",
+            "report_generation": "✅ Working (HTML with SHA-256 signatures)"
         }
     }
 
@@ -112,10 +111,14 @@ async def startup_event():
     """
     Run on application startup
     """
+    # Create database tables
+    Base.metadata.create_all(bind=engine)
+    print("✅ Database tables ready")
+
     print(f"🚀 {settings.APP_NAME} v{settings.APP_VERSION} starting...")
     print(f"📍 LocalStack endpoint: {settings.LOCALSTACK_ENDPOINT}")
     print(f"📚 API Documentation: http://localhost:8000/docs")
-    
+
     # Test LocalStack connection
     if test_localstack_connection():
         print("✅ LocalStack connected")

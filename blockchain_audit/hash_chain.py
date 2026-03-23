@@ -1,40 +1,205 @@
 """
 Blockchain-based Tamper-Proof Audit Logging
-Implements a simple but effective blockchain for compliance audit trails
+Implements SHA-256 + Merkle Tree for tamper-proof compliance audit trails
 """
 import json
 import hashlib
 from datetime import datetime
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from pathlib import Path
+
+
+class MerkleTree:
+    """
+    Merkle Tree implementation using SHA-256 hashing.
+
+    Provides cryptographic proof of data inclusion via Merkle proofs,
+    enabling efficient and tamper-proof verification of audit log entries.
+    """
+
+    def __init__(self, leaves: Optional[List[str]] = None):
+        """
+        Initialize Merkle Tree from an optional list of data items.
+
+        Args:
+            leaves: List of data strings to use as leaf nodes.
+        """
+        self._leaves: List[str] = []
+        self._tree: List[List[str]] = []
+        if leaves:
+            for leaf in leaves:
+                self._leaves.append(leaf)
+            self._build()
+
+    @staticmethod
+    def _hash(data: str) -> str:
+        """Compute SHA-256 hash of a string."""
+        return hashlib.sha256(data.encode()).hexdigest()
+
+    @staticmethod
+    def _hash_pair(left: str, right: str) -> str:
+        """Compute SHA-256 hash of two concatenated hashes."""
+        return hashlib.sha256((left + right).encode()).hexdigest()
+
+    def _build(self):
+        """Build (or rebuild) the full Merkle Tree from the current leaves."""
+        if not self._leaves:
+            self._tree = []
+            return
+
+        # Level 0 = hashed leaves
+        level = [self._hash(leaf) for leaf in self._leaves]
+        self._tree = [level]
+
+        # Build successive levels until we reach the root
+        while len(level) > 1:
+            next_level = []
+            for i in range(0, len(level), 2):
+                left = level[i]
+                # If odd number of nodes, duplicate the last one
+                right = level[i + 1] if i + 1 < len(level) else level[i]
+                next_level.append(self._hash_pair(left, right))
+            self._tree.append(next_level)
+            level = next_level
+
+    def add_leaf(self, data: str):
+        """
+        Add a new leaf and rebuild the tree.
+
+        Args:
+            data: Data string for the new leaf node.
+        """
+        self._leaves.append(data)
+        self._build()
+
+    def get_root_hash(self) -> Optional[str]:
+        """
+        Return the Merkle root hash.
+
+        Returns:
+            The root hash string, or None if the tree is empty.
+        """
+        if not self._tree:
+            return None
+        return self._tree[-1][0]
+
+    def get_proof(self, index: int) -> List[Tuple[str, str]]:
+        """
+        Return the Merkle proof (list of sibling hashes) for the leaf at *index*.
+
+        Each element is a tuple of (direction, hash) where direction is 'left'
+        or 'right', indicating which side the sibling sits on.
+
+        Args:
+            index: Zero-based index of the leaf.
+
+        Returns:
+            List of (direction, sibling_hash) tuples forming the proof path.
+
+        Raises:
+            IndexError: If the index is out of range.
+        """
+        if index < 0 or index >= len(self._leaves):
+            raise IndexError(f"Leaf index {index} out of range (0-{len(self._leaves) - 1})")
+
+        proof: List[Tuple[str, str]] = []
+        for level in self._tree[:-1]:  # skip the root level
+            if index % 2 == 0:
+                # sibling is to the right
+                sibling_index = index + 1
+                direction = "right"
+            else:
+                # sibling is to the left
+                sibling_index = index - 1
+                direction = "left"
+
+            if sibling_index < len(level):
+                proof.append((direction, level[sibling_index]))
+            else:
+                # odd node duplicated -- sibling is itself
+                proof.append((direction, level[index]))
+
+            # move to parent index
+            index //= 2
+
+        return proof
+
+    @staticmethod
+    def verify_proof(data: str, proof: List[Tuple[str, str]], root_hash: str) -> bool:
+        """
+        Verify that *data* is included in the tree with the given *root_hash*.
+
+        Args:
+            data: The original data string of the leaf.
+            proof: Merkle proof as returned by get_proof().
+            root_hash: Expected Merkle root hash.
+
+        Returns:
+            True if the proof is valid, False otherwise.
+        """
+        current = hashlib.sha256(data.encode()).hexdigest()
+
+        for direction, sibling_hash in proof:
+            if direction == "right":
+                current = hashlib.sha256((current + sibling_hash).encode()).hexdigest()
+            else:  # left
+                current = hashlib.sha256((sibling_hash + current).encode()).hexdigest()
+
+        return current == root_hash
+
+    @property
+    def leaf_count(self) -> int:
+        """Return the number of leaves in the tree."""
+        return len(self._leaves)
+
+    def get_leaves(self) -> List[str]:
+        """Return a copy of the raw leaf data list."""
+        return list(self._leaves)
+
 
 class BlockchainAuditLogger:
     """
     Blockchain implementation for tamper-proof compliance logging
-    
+
     Features:
     - SHA-256 hash chain
+    - Merkle Tree for efficient inclusion proofs
     - Immutable audit records
     - Integrity verification
     - Timestamp tracking
     """
-    
-    def __init__(self, log_file: str = "blockchain-audit/audit_logs.json"):
+
+    def __init__(self, log_file: str = "blockchain_audit/audit_logs.json"):
         """
         Initialize blockchain logger
-        
+
         Args:
             log_file: Path to blockchain storage file
         """
         self.log_file = Path(log_file)
         self.log_file.parent.mkdir(exist_ok=True, parents=True)
-        
+
+        # Initialize Merkle Tree with existing block hashes
+        self.merkle_tree = MerkleTree()
+
         # Initialize blockchain if doesn't exist
         if not self.log_file.exists():
             self._initialize_blockchain()
-    
+        else:
+            # Rebuild Merkle Tree from existing chain
+            self._rebuild_merkle_tree()
+
+    def _rebuild_merkle_tree(self):
+        """Rebuild the Merkle Tree from all block hashes in the existing chain."""
+        chain = self._load_chain()
+        self.merkle_tree = MerkleTree()
+        for block in chain:
+            self.merkle_tree.add_leaf(block["current_hash"])
+
     def _initialize_blockchain(self):
         """Create genesis block (first block in chain)"""
+        genesis_hash = self._calculate_hash(0, "Genesis Block", "0")
+
         genesis_block = {
             "id": 0,
             "timestamp": datetime.now().isoformat(),
@@ -43,30 +208,36 @@ class BlockchainAuditLogger:
                 "version": "1.0.0"
             },
             "previous_hash": "0",
-            "current_hash": self._calculate_hash(0, "Genesis Block", "0")
+            "current_hash": genesis_hash,
+            "merkle_root": None
         }
+
+        # Add genesis hash to Merkle Tree
+        self.merkle_tree.add_leaf(genesis_hash)
+        genesis_block["merkle_root"] = self.merkle_tree.get_root_hash()
+
         self._save_chain([genesis_block])
         print("🔐 Blockchain initialized with genesis block")
-    
+
     def _calculate_hash(self, block_id: int, data: str, previous_hash: str) -> str:
         """
         Calculate SHA-256 hash for a block
-        
+
         Args:
             block_id: Block number
             data: Block data as string
             previous_hash: Hash of previous block
-            
+
         Returns:
             str: Calculated hash
         """
         block_string = f"{block_id}{data}{previous_hash}".encode()
         return hashlib.sha256(block_string).hexdigest()
-    
+
     def _load_chain(self) -> List[Dict]:
         """
         Load blockchain from file
-        
+
         Returns:
             List[Dict]: List of blocks
         """
@@ -76,17 +247,17 @@ class BlockchainAuditLogger:
         except Exception as e:
             print(f"Error loading blockchain: {e}")
             return []
-    
+
     def _save_chain(self, chain: List[Dict]):
         """
         Save blockchain to file
-        
+
         Args:
             chain: List of blocks to save
         """
         with open(self.log_file, 'w') as f:
             json.dump(chain, f, indent=2)
-    
+
     def add_compliance_log(
         self,
         resource_name: str,
@@ -98,7 +269,7 @@ class BlockchainAuditLogger:
     ) -> Dict:
         """
         Add new compliance check to blockchain
-        
+
         Args:
             resource_name: Name of checked resource
             resource_type: Type of resource (e.g., 's3_bucket')
@@ -106,16 +277,16 @@ class BlockchainAuditLogger:
             checks_passed: Number of passed checks
             checks_total: Total number of checks
             check_details: Detailed check results
-            
+
         Returns:
             Dict: The created block
         """
         chain = self._load_chain()
-        
+
         # Get previous block
         previous_block = chain[-1] if chain else None
         previous_hash = previous_block["current_hash"] if previous_block else "0"
-        
+
         # Create new block data
         new_id = len(chain)
         data = json.dumps({
@@ -126,9 +297,13 @@ class BlockchainAuditLogger:
             "total": checks_total,
             "details": check_details
         }, sort_keys=True)
-        
+
         current_hash = self._calculate_hash(new_id, data, previous_hash)
-        
+
+        # Add block hash to Merkle Tree and get updated root
+        self.merkle_tree.add_leaf(current_hash)
+        merkle_root = self.merkle_tree.get_root_hash()
+
         # Create new block
         new_block = {
             "id": new_id,
@@ -140,17 +315,18 @@ class BlockchainAuditLogger:
             "checks_total": checks_total,
             "check_details": check_details,
             "previous_hash": previous_hash,
-            "current_hash": current_hash
+            "current_hash": current_hash,
+            "merkle_root": merkle_root
         }
-        
+
         # Append and save
         chain.append(new_block)
         self._save_chain(chain)
-        
+
         print(f"✅ Added block #{new_id} to blockchain: {resource_name} ({compliance_score}%)")
-        
+
         return new_block
-    
+
     def get_audit_trail(
         self,
         resource_name: Optional[str] = None,
@@ -158,47 +334,47 @@ class BlockchainAuditLogger:
     ) -> List[Dict]:
         """
         Retrieve audit trail
-        
+
         Args:
             resource_name: Optional filter by resource name
             limit: Optional limit number of results
-            
+
         Returns:
             List[Dict]: List of audit log entries
         """
         chain = self._load_chain()
-        
+
         # Filter by resource name if specified
         if resource_name:
             chain = [block for block in chain if block.get("resource_name") == resource_name]
-        
+
         # Apply limit if specified
         if limit:
             chain = chain[-limit:]
-        
+
         return chain
-    
+
     def verify_chain_integrity(self) -> tuple[bool, Optional[str]]:
         """
         Verify blockchain hasn't been tampered with
-        
+
         Returns:
             tuple: (is_valid, error_message)
         """
         chain = self._load_chain()
-        
+
         if len(chain) == 0:
             return False, "Empty blockchain"
-        
+
         # Check each block
         for i in range(1, len(chain)):
             current_block = chain[i]
             previous_block = chain[i - 1]
-            
+
             # Verify previous hash matches
             if current_block["previous_hash"] != previous_block["current_hash"]:
                 return False, f"Hash mismatch at block {i}"
-            
+
             # Verify current hash is correct
             data = json.dumps({
                 "resource_name": current_block.get("resource_name", ""),
@@ -208,48 +384,111 @@ class BlockchainAuditLogger:
                 "total": current_block.get("checks_total", 0),
                 "details": current_block.get("check_details", {})
             }, sort_keys=True)
-            
+
             calculated_hash = self._calculate_hash(
                 current_block["id"],
                 data,
                 current_block["previous_hash"]
             )
-            
+
             if current_block["current_hash"] != calculated_hash:
                 return False, f"Invalid hash at block {i}"
-        
+
         return True, None
-    
+
+    def get_merkle_root(self) -> Optional[str]:
+        """
+        Return the current Merkle root hash of all block hashes.
+
+        Returns:
+            The Merkle root hash, or None if the tree is empty.
+        """
+        return self.merkle_tree.get_root_hash()
+
+    def get_merkle_proof(self, block_id: int) -> List[Tuple[str, str]]:
+        """
+        Return the Merkle proof for a specific block.
+
+        The proof can be used to verify that a block's hash is included in the
+        Merkle Tree without needing the full tree.
+
+        Args:
+            block_id: The id of the block (its index in the chain).
+
+        Returns:
+            List of (direction, sibling_hash) tuples forming the proof path.
+
+        Raises:
+            ValueError: If the block_id does not exist in the chain.
+        """
+        if block_id < 0 or block_id >= self.merkle_tree.leaf_count:
+            raise ValueError(
+                f"Block id {block_id} not found. "
+                f"Chain has {self.merkle_tree.leaf_count} blocks (ids 0-{self.merkle_tree.leaf_count - 1})."
+            )
+        return self.merkle_tree.get_proof(block_id)
+
+    def verify_merkle_proof(self, block_id: int) -> bool:
+        """
+        Verify that a block's hash is included in the current Merkle Tree.
+
+        Loads the block from the chain, retrieves its Merkle proof, and
+        verifies the proof against the current Merkle root.
+
+        Args:
+            block_id: The id of the block to verify.
+
+        Returns:
+            True if the block is verifiably included in the Merkle Tree.
+
+        Raises:
+            ValueError: If the block_id does not exist in the chain.
+        """
+        chain = self._load_chain()
+        if block_id < 0 or block_id >= len(chain):
+            raise ValueError(
+                f"Block id {block_id} not found. "
+                f"Chain has {len(chain)} blocks (ids 0-{len(chain) - 1})."
+            )
+
+        block_hash = chain[block_id]["current_hash"]
+        proof = self.merkle_tree.get_proof(block_id)
+        root_hash = self.merkle_tree.get_root_hash()
+
+        return MerkleTree.verify_proof(block_hash, proof, root_hash)
+
     def get_chain_stats(self) -> Dict:
         """
         Get blockchain statistics
-        
+
         Returns:
             Dict: Statistics about the blockchain
         """
         chain = self._load_chain()
-        
+
         if len(chain) <= 1:  # Only genesis block
             return {
                 "total_blocks": len(chain),
                 "total_audits": 0,
                 "average_compliance": 0,
-                "chain_valid": True
+                "chain_valid": True,
+                "merkle_root_hash": self.merkle_tree.get_root_hash()
             }
-        
+
         # Calculate stats (skip genesis block)
         audit_blocks = [b for b in chain if b.get("id", 0) > 0]
         total_score = sum(b.get("compliance_score", 0) for b in audit_blocks)
         avg_compliance = total_score / len(audit_blocks) if audit_blocks else 0
-        
+
         is_valid, _ = self.verify_chain_integrity()
-        
+
         return {
             "total_blocks": len(chain),
             "total_audits": len(audit_blocks),
             "average_compliance": round(avg_compliance, 2),
             "chain_valid": is_valid,
-            "last_audit": audit_blocks[-1].get("timestamp") if audit_blocks else None
+            "last_audit": audit_blocks[-1].get("timestamp") if audit_blocks else None,
+            "merkle_root_hash": self.merkle_tree.get_root_hash()
         }
 
 # Global blockchain logger instance

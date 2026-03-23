@@ -1,0 +1,97 @@
+.sidebar {
+  width: 220px;
+  min-height: 100vh;
+  background: #0d1117;
+  border-right: 1px solid #21262d;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 18px;
+  border-bottom: 1px solid #21262d;
+  color: #58a6ff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.brand-icon {
+  font-size: 1.4rem;
+}
+
+.sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 12px 0;
+  flex: 1;
+}
+
+.sidebar-nav li {
+  margin: 2px 8px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  color: #8b949e;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link:hover {
+  background: #161b22;
+  color: #c9d1d9;
+}
+
+.nav-link.active {
+  background: #1f3a5f;
+  color: #58a6ff;
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1rem;
+  width: 18px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid #21262d;
+  color: #484f58;
+  font-size: 0.7rem;
+}
+.user-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.user-email {
+  color: #8b949e;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+.logout-btn {
+  background: none;
+  border: 1px solid #21262d;
+  color: #8b949e;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.logout-btn:hover { color: #f85149; border-color: #f85149; }

@@ -1,100 +1,111 @@
 """
 Compliance Checking Engine
-Runs security and compliance checks on AWS resources
+Runs security and compliance checks on AWS resources against ISO 27001 & NIST 800-53 controls
 """
 from backend.app.services.digital_twin import get_s3_client
-from backend.app.models.schemas import ComplianceCheck, ComplianceResult
+from backend.app.models.schemas import ComplianceResult
+from backend.app.compliance.engine import compliance_engine
 from datetime import datetime
+
 
 def check_bucket_compliance(bucket_name: str) -> ComplianceResult:
     """
-    Run all compliance checks on S3 bucket
-    
+    Run all compliance checks on S3 bucket against ISO 27001 & NIST 800-53 controls.
+
     Args:
         bucket_name: Name of bucket to check
-        
+
     Returns:
-        ComplianceResult: Complete compliance assessment
+        ComplianceResult: Complete compliance assessment with control references
     """
     s3_client = get_s3_client()
-    checks = {}
-    
-    # Detect if bucket should be secure (for demo)
-    is_secure_bucket = "secure" in bucket_name.lower()
-    
-    # ==================== CHECK 1: ENCRYPTION ====================
-    try:
-        s3_client.get_bucket_encryption(Bucket=bucket_name)
-        checks['encryption'] = ComplianceCheck(
-            status='PASS',
-            message='Server-side encryption is enabled',
-            severity='high',
-            remediation=None
-        )
-    except:
-        if is_secure_bucket:
-            checks['encryption'] = ComplianceCheck(
-                status='PASS',
-                message='Encryption enabled (configured in Terraform)',
-                severity='high',
-                remediation=None
-            )
-        else:
-            checks['encryption'] = ComplianceCheck(
-                status='FAIL',
-                message='Server-side encryption is NOT enabled',
-                severity='high',
-                remediation='Enable AES256 or KMS encryption'
-            )
-    
-    # ==================== CHECK 2: VERSIONING ====================
-    if is_secure_bucket:
-        checks['versioning'] = ComplianceCheck(
-            status='PASS',
-            message='Bucket versioning is enabled',
-            severity='medium',
-            remediation=None
-        )
-    else:
-        checks['versioning'] = ComplianceCheck(
-            status='FAIL',
-            message='Bucket versioning is NOT enabled',
-            severity='medium',
-            remediation='Enable versioning to protect against deletions'
-        )
-    
-    # ==================== CHECK 3: PUBLIC ACCESS ====================
-    if is_secure_bucket:
-        checks['public_access'] = ComplianceCheck(
-            status='PASS',
-            message='Public access is fully blocked',
-            severity='critical',
-            remediation=None
-        )
-    else:
-        checks['public_access'] = ComplianceCheck(
-            status='FAIL',
-            message='Public access block NOT configured',
-            severity='critical',
-            remediation='Enable all public access block settings'
-        )
-    
-    # ==================== CALCULATE SCORE ====================
-    total_checks = len(checks)
-    passed_checks = sum(1 for check in checks.values() if check.status == 'PASS')
-    compliance_score = (passed_checks / total_checks) * 100
-    
-    # ==================== GENERATE RECOMMENDATIONS ====================
-    recommendations = []
-    for check_name, check in checks.items():
-        if check.status == 'FAIL' and check.remediation:
-            recommendations.append(f"{check_name.upper()}: {check.remediation}")
-    
-    return ComplianceResult(
+    resource_config = _get_bucket_config(s3_client, bucket_name)
+
+    result = compliance_engine.scan_resource(
+        resource_type="s3_bucket",
         resource_name=bucket_name,
-        resource_type='s3_bucket',
-        compliance_score=round(compliance_score, 2),
-        checks=checks,
-        summary=f"{passed_checks}/{total_checks} checks passed",
-        recommendations=recommendations
+        resource_config=resource_config
     )
+    return result
+
+
+def _get_bucket_config(s3_client, bucket_name: str) -> dict:
+    """
+    Query LocalStack/AWS to build a configuration dict for the bucket.
+    This dict is then evaluated against compliance rules.
+    """
+    config = {"bucket_name": bucket_name}
+
+    # Check encryption
+    try:
+        enc = s3_client.get_bucket_encryption(Bucket=bucket_name)
+        rules = enc.get("ServerSideEncryptionConfiguration", {}).get("Rules", [])
+        if rules:
+            config["server_side_encryption_configuration"] = rules
+            sse = rules[0].get("ApplyServerSideEncryptionByDefault", {})
+            config["sse_algorithm"] = sse.get("SSEAlgorithm", "")
+    except Exception:
+        pass
+
+    # Check versioning
+    try:
+        ver = s3_client.get_bucket_versioning(Bucket=bucket_name)
+        versioning_status = ver.get("Status", "")
+        mfa_delete = ver.get("MFADelete", "Disabled")
+        config["versioning"] = {
+            "enabled": versioning_status == "Enabled",
+            "mfa_delete": mfa_delete == "Enabled"
+        }
+    except Exception:
+        config["versioning"] = {"enabled": False, "mfa_delete": False}
+
+    # Check public access block
+    try:
+        pab = s3_client.get_public_access_block(Bucket=bucket_name)
+        pab_config = pab.get("PublicAccessBlockConfiguration", {})
+        config["public_access_block"] = {
+            "block_public_acls": pab_config.get("BlockPublicAcls", False),
+            "ignore_public_acls": pab_config.get("IgnorePublicAcls", False),
+            "block_public_policy": pab_config.get("BlockPublicPolicy", False),
+            "restrict_public_buckets": pab_config.get("RestrictPublicBuckets", False),
+        }
+    except Exception:
+        config["public_access_block"] = {}
+
+    # Check bucket policy
+    try:
+        policy = s3_client.get_bucket_policy(Bucket=bucket_name)
+        config["policy"] = policy.get("Policy", "")
+    except Exception:
+        config["policy"] = ""
+
+    # Check logging
+    try:
+        logging_conf = s3_client.get_bucket_logging(Bucket=bucket_name)
+        if logging_conf.get("LoggingEnabled"):
+            config["logging"] = logging_conf["LoggingEnabled"]
+    except Exception:
+        pass
+
+    # Check lifecycle
+    try:
+        lifecycle = s3_client.get_bucket_lifecycle_configuration(Bucket=bucket_name)
+        if lifecycle.get("Rules"):
+            config["lifecycle_rule"] = lifecycle["Rules"]
+    except Exception:
+        pass
+
+    return config
+
+
+def check_terraform_compliance(parsed_tf: dict) -> list:
+    """
+    Run compliance checks on a parsed Terraform configuration.
+
+    Args:
+        parsed_tf: Parsed Terraform HCL2 configuration
+
+    Returns:
+        List of ComplianceResult for each resource
+    """
+    return compliance_engine.scan_terraform(parsed_tf)

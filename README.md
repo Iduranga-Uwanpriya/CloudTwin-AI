@@ -18,43 +18,48 @@ CloudTwin AI is an intelligent cloud compliance platform that creates a digital 
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 ```
 cloudtwin-ai/
 │
 ├── backend/                    # Core FastAPI Application
 │   ├── app/
 │   │   ├── main.py            # API entry point
-│   │   ├── api/               # REST API routes
+│   │   ├── api/               # REST API routes (deploy, compliance, audit, anomaly, reports)
 │   │   ├── services/          # Business logic
-│   │   ├── models/            # Data schemas
+│   │   ├── models/            # Pydantic schemas
+│   │   ├── compliance/        # Policy-as-Code engine (ISO 27001, NIST 800-53)
 │   │   └── config.py          # Configuration
-│   ├── static/                # Web dashboard
-│   ├── requirements.txt
 │   └── Dockerfile
 │
-├── ai-engine/                 # Machine Learning Module
-│   ├── anomaly_detection.py   # ML model implementation
-│   ├── model_training.ipynb   # Training notebook
-│   ├── dataset/               # Training data
-│   └── saved_models/          # Trained models
+├── ai_engine/                 # Machine Learning Module
+│   ├── ml/
+│   │   ├── models.py          # Isolation Forest, One-Class SVM, Autoencoder
+│   │   ├── inference.py       # Production inference engine (UNSW-NB15)
+│   │   ├── preprocessor.py    # Feature engineering
+│   │   └── trainer.py         # Training pipeline
+│   ├── train.py               # Standalone training script
+│   ├── train_anomaly_models.ipynb  # Kaggle training notebook
+│   ├── data-sets/             # Synthetic training data
+│   └── saved_models/          # Trained model artifacts
 │
 ├── digital-twin/              # Infrastructure Simulation
 │   ├── terraform_templates/   # Sample IaC files
-│   ├── localstack_config/     # LocalStack setup
-│   └── scripts/               # Helper scripts
+│   ├── localstack_config/     # LocalStack init scripts
+│   └── scripts/               # Setup scripts
 │
-├── blockchain-audit/          # Tamper-Proof Logging
-│   ├── hash_chain.py          # Blockchain implementation
+├── blockchain_audit/          # Tamper-Proof Audit Logging
+│   ├── hash_chain.py          # SHA-256 hash chain + Merkle Tree
 │   └── audit_logs.json        # Audit trail storage
 │
-├── frontend/                  # React Dashboard (planned)
+├── frontend/                  # React 18 Dashboard
 │   └── src/
+│       ├── pages/             # Dashboard, Compliance, AnomalyDetection, AuditTrail, Deploy
+│       ├── components/        # Sidebar, StatsCard, ComplianceGauge
+│       └── services/          # API client
 │
-└── docs/                      # Documentation
-    ├── architecture_diagram.png
-    ├── sequence_diagram.png
-    └── api_documentation.md
+├── docker-compose.yml         # Full stack orchestration
+└── requirements.txt           # Python dependencies
 ```
 
 ---
@@ -148,25 +153,16 @@ pytest tests/
 
 ## 🎓 Project Status
 
-### ✅ Prototype (Feb 2025)
-- [x] FastAPI backend
-- [x] Terraform parsing
-- [x] LocalStack integration
-- [x] S3 compliance checking
-- [x] Blockchain audit trail
-- [x] Web interface
-
-### 🔄 In Development (Mar 2025)
-- [ ] AI anomaly detection
-- [ ] Auto-remediation engine
-- [ ] EC2, RDS, IAM support
-- [ ] React dashboard
-
-### ⏳ Planned (Apr 2025)
-- [ ] Real AWS integration
-- [ ] Advanced ML models
-- [ ] Production deployment
-- [ ] Comprehensive testing
+### Completed
+- [x] FastAPI backend with REST API
+- [x] Terraform parsing and LocalStack deployment
+- [x] S3, EC2, IAM compliance checking (ISO 27001 + NIST 800-53)
+- [x] Blockchain audit trail (SHA-256 + Merkle Tree)
+- [x] AI anomaly detection (Isolation Forest, One-Class SVM, Autoencoder ensemble)
+- [x] UNSW-NB15 dataset training with evaluation metrics
+- [x] React 18 dashboard with 5 pages
+- [x] HTML report generation with SHA-256 signatures
+- [x] Digital twin simulation via LocalStack
 
 ---
 

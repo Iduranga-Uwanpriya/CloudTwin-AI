@@ -14,6 +14,9 @@ class ComplianceCheck(BaseModel):
     message: str = Field(..., description="Explanation of the check")
     severity: str = Field(..., description="critical, high, medium, or low")
     remediation: Optional[str] = Field(None, description="How to fix if failed")
+    control_reference: Optional[str] = Field(
+        None, description="ISO 27001 / NIST 800-53 control reference"
+    )
 
 class ComplianceResult(BaseModel):
     """Complete compliance assessment for a resource"""
@@ -54,6 +57,41 @@ class AuditTrailResponse(BaseModel):
     chain_valid: bool
     blocks: List[BlockchainBlock]
     message: Optional[str] = None
+
+# ==================== ANOMALY DETECTION MODELS ====================
+
+class AnomalyDetectionResult(BaseModel):
+    """Result from AI-powered anomaly detection"""
+    anomaly_type: str = Field(..., description="Type of anomaly detected")
+    resource_name: str = Field(..., description="Affected resource identifier")
+    description: str = Field(..., description="Human-readable description of the anomaly")
+    risk_level: str = Field(..., description="critical, high, medium, or low")
+    confidence: str = Field(..., description="Detection confidence percentage")
+    detected_at: str = Field(
+        default_factory=lambda: datetime.now().isoformat(),
+        description="Timestamp when anomaly was detected",
+    )
+    recommended_action: Optional[str] = Field(
+        None, description="Suggested remediation action"
+    )
+
+# ==================== REPORT MODELS ====================
+
+class ReportMetadata(BaseModel):
+    """Metadata for a generated report"""
+    report_id: str = Field(..., description="Unique report identifier")
+    report_type: str = Field(..., description="compliance, anomaly, or full")
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now().isoformat(),
+        description="Report generation timestamp",
+    )
+    sha256_signature: str = Field(
+        ..., description="SHA-256 hash signature for tamper-proof verification"
+    )
+    format: str = Field(default="html", description="Report format (html)")
+    resource_count: int = Field(
+        default=0, description="Number of resources covered in the report"
+    )
 
 # ==================== HEALTH CHECK ====================
 

@@ -1,13 +1,28 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
+  postgres:
+    container_name: cloudtwin-postgres
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=cloudtwin
+      - POSTGRES_PASSWORD=cloudtwin_secret
+      - POSTGRES_DB=cloudtwin_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - cloudtwin-network
+
   # LocalStack - AWS Cloud Emulator
   localstack:
     container_name: cloudtwin-localstack
     image: localstack/localstack:latest
     ports:
-      - "4566:4566"
-      - "4571:4571"
+      - "14566:4566"
+      - "14571:4571"
     environment:
       - SERVICES=s3,ec2,iam,rds,cloudtrail
       - DEBUG=1
@@ -21,33 +36,45 @@ services:
   # FastAPI Backend
   backend:
     container_name: cloudtwin-backend
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
     depends_on:
       - localstack
+      - postgres
     environment:
       - LOCALSTACK_ENDPOINT=http://localstack:4566
+      - DATABASE_URL=postgresql://cloudtwin:cloudtwin_secret@postgres:5432/cloudtwin_db
+      - JWT_SECRET=cloudtwin-jwt-secret-change-in-production
       - PYTHONPATH=/app
     volumes:
-      - ./backend:/app
-      - ./blockchain-audit:/app/blockchain-audit
-      - ./ai-engine:/app/ai-engine
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      - ./backend:/app/backend
+      - ./blockchain_audit:/app/blockchain_audit
+      - ./ai_engine:/app/ai_engine
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
     networks:
       - cloudtwin-network
 
-  # Frontend (placeholder for React app)
-  # Uncomment when React app is ready
-  # frontend:
-  #   container_name: cloudtwin-frontend
-  #   build: ./frontend
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/app
-  #   networks:
-  #     - cloudtwin-network
+  # React Frontend
+  frontend:
+    container_name: cloudtwin-frontend
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://cloudtwin-backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - cloudtwin-network
+
+volumes:
+  pgdata:
 
 networks:
   cloudtwin-network:
