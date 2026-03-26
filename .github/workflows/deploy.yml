@@ -82,7 +82,7 @@ jobs:
 
             # ── Write .env from GitHub Secrets ──
             cat > .env << 'ENVEOF'
-            GITHUB_REPOSITORY=${{ github.repository }}
+            GITHUB_REPOSITORY=iduranga-uwanpriya/research
 
             # ── PostgreSQL ──
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}

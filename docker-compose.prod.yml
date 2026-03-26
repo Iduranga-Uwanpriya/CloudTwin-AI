@@ -15,7 +15,7 @@ services:
       - "127.0.0.1:5432:5432"
 
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY:-cloudtwin-ai}:latest
+    image: ghcr.io/iduranga-uwanpriya/research:latest
     container_name: cloudtwin-app
     restart: always
     depends_on:
