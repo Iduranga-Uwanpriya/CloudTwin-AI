@@ -12,4 +12,12 @@ module.exports = function (app) {
       changeOrigin: true,
     })
   );
+
+  app.use(
+    "/health",
+    createProxyMiddleware({
+      target,
+      changeOrigin: true,
+    })
+  );
 };

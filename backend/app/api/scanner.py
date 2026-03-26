@@ -1,8 +1,9 @@
 """
-Live AWS Scanner API — trigger scans, view results, get history.
+Live AWS Scanner API — trigger scans, view results, get history, generate Terraform, clone to twin.
 """
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -10,6 +11,7 @@ from backend.app.db.session import get_db
 from backend.app.db.models import User, AwsAccount, ScanResult, ComplianceFinding
 from backend.app.auth import get_current_user
 from backend.app.services.aws_scanner import scan_aws_account
+from backend.app.services.tf_generator import generate_terraform
 from backend.app.compliance.engine import compliance_engine
 
 router = APIRouter(prefix="/scanner", tags=["Live Scanner"])
@@ -73,20 +75,20 @@ def trigger_scan(
 
     # S3 checks
     for bucket in inventory["resources"].get("s3", []):
-        result = compliance_engine.scan_resource(bucket["name"], bucket)
-        for check_key, check_val in result.get("checks", {}).items():
+        result = compliance_engine.scan_resource("s3_bucket", bucket["name"], bucket)
+        for check_key, check_val in result.checks.items():
             rule = _find_rule(check_key)
             all_findings.append({
                 "resource_type": "s3",
                 "resource_id": bucket["name"],
                 "rule_id": rule.get("rule_id", check_key),
                 "rule_title": rule.get("title", check_key),
-                "status": check_val.get("status", "SKIP"),
-                "severity": rule.get("severity", "medium"),
+                "status": check_val.status,
+                "severity": rule.get("severity", check_val.severity),
                 "iso_control": rule.get("iso_control"),
                 "nist_control": rule.get("nist_control"),
-                "remediation": rule.get("remediation"),
-                "details": check_val,
+                "remediation": rule.get("remediation", check_val.remediation),
+                "details": {"message": check_val.message},
             })
 
     # EC2 checks
@@ -183,6 +185,9 @@ def trigger_scan(
     failed = total - passed
     score = round((passed / total) * 100, 2) if total > 0 else 100.0
 
+    # Count only resources that actually have compliance checks (exclude IAM etc.)
+    actual_resources = len(set((f["resource_type"], f["resource_id"]) for f in all_findings))
+
     # 4. Persist to DB
     scan = ScanResult(
         user_id=current_user.id,
@@ -191,7 +196,7 @@ def trigger_scan(
         total_checks=total,
         passed_checks=passed,
         failed_checks=failed,
-        resources_scanned=inventory.get("total_resources", 0),
+        resources_scanned=actual_resources,
         scan_duration_seconds=inventory.get("scan_duration_seconds"),
     )
     db.add(scan)
@@ -235,13 +240,13 @@ def trigger_scan(
         total_checks=total,
         passed_checks=passed,
         failed_checks=failed,
-        resources_scanned=inventory.get("total_resources", 0),
+        resources_scanned=actual_resources,
         scan_duration_seconds=inventory.get("scan_duration_seconds"),
         findings_summary=severity_summary,
     )
 
 
-@router.get("/{account_id}/history", response_model=list[ScanHistoryItem])
+@router.get("/{account_id}/history")
 def scan_history(
     account_id: str,
     limit: int = 20,
@@ -264,18 +269,30 @@ def scan_history(
         .limit(limit)
         .all()
     )
-    return [
-        ScanHistoryItem(
-            scan_id=s.id,
-            overall_score=s.overall_score,
-            total_checks=s.total_checks,
-            passed_checks=s.passed_checks,
-            failed_checks=s.failed_checks,
-            resources_scanned=s.resources_scanned,
-            created_at=str(s.created_at),
+
+    results = []
+    for s in scans:
+        # Get distinct resources for this scan
+        resources = (
+            db.query(ComplianceFinding.resource_type, ComplianceFinding.resource_id)
+            .filter(ComplianceFinding.scan_id == s.id)
+            .distinct()
+            .all()
         )
-        for s in scans
-    ]
+        resource_list = [{"type": r[0], "id": r[1]} for r in resources]
+
+        results.append({
+            "scan_id": s.id,
+            "overall_score": s.overall_score,
+            "total_checks": s.total_checks,
+            "passed_checks": s.passed_checks,
+            "failed_checks": s.failed_checks,
+            "resources_scanned": s.resources_scanned,
+            "created_at": str(s.created_at),
+            "resources": resource_list,
+        })
+
+    return results
 
 
 @router.get("/results/{scan_id}")
@@ -325,6 +342,158 @@ def get_scan_findings(
     }
 
 
+@router.post("/{account_id}/generate-terraform")
+def generate_terraform_from_scan(
+    account_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Scan a connected AWS account and generate Terraform (.tf) representing
+    the current state. This is the first step of the "Clone to Digital Twin" flow.
+    """
+    account = (
+        db.query(AwsAccount)
+        .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id, AwsAccount.is_active == True)
+        .first()
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="AWS account not found")
+
+    try:
+        inventory = scan_aws_account(account)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to scan AWS account: {str(e)}")
+
+    tf_content = generate_terraform(inventory)
+
+    return {
+        "status": "success",
+        "account_alias": account.account_alias,
+        "resources_found": inventory.get("total_resources", 0),
+        "terraform": tf_content,
+    }
+
+
+@router.post("/{account_id}/generate-terraform/download")
+def download_terraform(
+    account_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Download the generated Terraform as a .tf file."""
+    account = (
+        db.query(AwsAccount)
+        .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id, AwsAccount.is_active == True)
+        .first()
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="AWS account not found")
+
+    try:
+        inventory = scan_aws_account(account)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to scan AWS account: {str(e)}")
+
+    tf_content = generate_terraform(inventory)
+
+    return PlainTextResponse(
+        content=tf_content,
+        media_type="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={account.account_alias}_infrastructure.tf"},
+    )
+
+
+@router.post("/{account_id}/clone-to-twin")
+def clone_to_digital_twin(
+    account_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Full Clone-to-Twin flow:
+    1. Scan real AWS account
+    2. Generate Terraform
+    3. Deploy S3 buckets to LocalStack digital twin
+    4. Return twin status + compliance scan results
+    """
+    account = (
+        db.query(AwsAccount)
+        .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id, AwsAccount.is_active == True)
+        .first()
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="AWS account not found")
+
+    # 1. Scan real AWS
+    try:
+        inventory = scan_aws_account(account)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to scan AWS account: {str(e)}")
+
+    # 2. Generate Terraform
+    tf_content = generate_terraform(inventory)
+
+    # 3. Deploy S3 buckets to LocalStack
+    from backend.app.services.digital_twin import get_s3_client
+    from backend.app.config import settings
+    s3 = get_s3_client()
+    cloned_buckets = []
+
+    for bucket in inventory["resources"].get("s3", []):
+        name = bucket["name"]
+        try:
+            create_args = {"Bucket": name}
+            if settings.AWS_REGION != "us-east-1":
+                create_args["CreateBucketConfiguration"] = {"LocationConstraint": settings.AWS_REGION}
+            s3.create_bucket(**create_args)
+        except Exception as e:
+            if "BucketAlreadyOwnedByYou" not in str(e):
+                continue
+
+        # Replicate config
+        if bucket.get("encryption"):
+            try:
+                s3.put_bucket_encryption(
+                    Bucket=name,
+                    ServerSideEncryptionConfiguration={
+                        "Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]
+                    },
+                )
+            except Exception:
+                pass
+
+        if bucket.get("versioning") == "Enabled":
+            try:
+                s3.put_bucket_versioning(Bucket=name, VersioningConfiguration={"Status": "Enabled"})
+            except Exception:
+                pass
+
+        pab = bucket.get("public_access_block")
+        if pab:
+            try:
+                s3.put_public_access_block(Bucket=name, PublicAccessBlockConfiguration=pab)
+            except Exception:
+                pass
+
+        cloned_buckets.append(name)
+
+    # 4. Run compliance scan on cloned buckets
+    scan_results = []
+    for name in cloned_buckets:
+        result = compliance_engine.scan_resource("s3_bucket", name, {"name": name})
+        scan_results.append({"bucket": name, "score": result.compliance_score})
+
+    return {
+        "status": "success",
+        "message": f"Cloned {len(cloned_buckets)} resources to digital twin",
+        "cloned_resources": cloned_buckets,
+        "terraform": tf_content,
+        "compliance_preview": scan_results,
+        "total_resources_in_account": inventory.get("total_resources", 0),
+    }
+
+
 def _find_rule(check_key: str) -> dict:
     """Look up compliance rule metadata by check_key."""
     from backend.app.compliance.rules import S3_RULES, EC2_RULES, IAM_RULES
@@ -339,3 +508,83 @@ def _find_rule(check_key: str) -> dict:
                 "remediation": rule.remediation,
             }
     return {"rule_id": check_key, "title": check_key, "severity": "medium"}
+
+
+# ── CloudTrail Threat Analysis ────────────────────────────────
+
+@router.post("/{account_id}/cloudtrail-threats")
+def analyze_cloudtrail_threats(
+    account_id: str,
+    hours: int = 24,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Analyze CloudTrail events for suspicious activity.
+    Pulls recent events and applies threat detection rules.
+    """
+    account = (
+        db.query(AwsAccount)
+        .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id, AwsAccount.is_active == True)
+        .first()
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="AWS account not found")
+
+    from backend.app.services.aws_scanner import get_aws_session
+    from backend.app.services.cloudtrail_analyzer import analyze_cloudtrail
+
+    try:
+        session = get_aws_session(account)
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to connect to AWS. Check IAM role. Error: {str(e)}",
+        )
+
+    results = analyze_cloudtrail(session, hours=hours)
+
+    if results.get("status") == "error":
+        raise HTTPException(status_code=502, detail=results.get("error", "CloudTrail analysis failed"))
+
+    return results
+
+
+# ── VPC Flow Log + ML Analysis ────────────────────────────────
+
+@router.post("/{account_id}/vpc-flowlog-analysis")
+def analyze_vpc_flow_logs(
+    account_id: str,
+    hours: int = 1,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Pull VPC Flow Logs from CloudWatch and run them through
+    the trained ML anomaly detection models (IF + SVM + Autoencoder).
+    """
+    account = (
+        db.query(AwsAccount)
+        .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id, AwsAccount.is_active == True)
+        .first()
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="AWS account not found")
+
+    from backend.app.services.aws_scanner import get_aws_session
+    from backend.app.services.vpc_flowlog_analyzer import pull_vpc_flow_logs
+
+    try:
+        session = get_aws_session(account)
+    except Exception as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Failed to connect to AWS. Check IAM role. Error: {str(e)}",
+        )
+
+    results = pull_vpc_flow_logs(session, hours=hours)
+
+    if results.get("status") == "error":
+        raise HTTPException(status_code=502, detail=results.get("message", "VPC Flow Log analysis failed"))
+
+    return results

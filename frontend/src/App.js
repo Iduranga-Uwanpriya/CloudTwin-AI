@@ -50,9 +50,9 @@ export default function App() {
             <Route path="/"           element={<Dashboard />} />
             <Route path="/aws"        element={<AwsConnect />} />
             <Route path="/compliance" element={<Compliance />} />
+            <Route path="/deploy"     element={<Deploy />} />
             <Route path="/anomaly"    element={<AnomalyDetection />} />
             <Route path="/audit"      element={<AuditTrail />} />
-            <Route path="/deploy"     element={<Deploy />} />
           </Routes>
         </main>
       </div>

@@ -65,13 +65,14 @@ def check_all_buckets():
             total_score += compliance.compliance_score
 
             try:
+                checks_passed = sum(1 for c in compliance.checks.values() if c.status == "PASS")
                 blockchain_logger.add_compliance_log(
                     resource_name=bucket_name,
                     resource_type="s3_bucket",
                     compliance_score=compliance.compliance_score,
-                    checks_passed=compliance.checks_passed,
-                    checks_total=compliance.checks_total,
-                    check_details=compliance.check_details
+                    checks_passed=checks_passed,
+                    checks_total=len(compliance.checks),
+                    check_details={k: v.dict() for k, v in compliance.checks.items()}
                 )
             except Exception as e:
                 print(f"Warning: Failed to log to blockchain: {e}")

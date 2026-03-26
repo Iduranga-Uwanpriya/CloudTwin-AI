@@ -32,7 +32,10 @@ def deploy_bucket(bucket_name: str) -> bool:
     """
     try:
         s3_client = get_s3_client()
-        s3_client.create_bucket(Bucket=bucket_name)
+        create_args = {"Bucket": bucket_name}
+        if settings.AWS_REGION != "us-east-1":
+            create_args["CreateBucketConfiguration"] = {"LocationConstraint": settings.AWS_REGION}
+        s3_client.create_bucket(**create_args)
         return True
     except Exception as e:
         if 'BucketAlreadyOwnedByYou' in str(e):

@@ -21,8 +21,8 @@ services:
     container_name: cloudtwin-localstack
     image: localstack/localstack:latest
     ports:
-      - "14566:4566"
-      - "14571:4571"
+      - "4566:4566"
+      - "4571:4571"
     environment:
       - SERVICES=s3,ec2,iam,rds,cloudtrail
       - DEBUG=1
@@ -49,6 +49,10 @@ services:
       - DATABASE_URL=postgresql://cloudtwin:cloudtwin_secret@postgres:5432/cloudtwin_db
       - JWT_SECRET=cloudtwin-jwt-secret-change-in-production
       - PYTHONPATH=/app
+      # Real AWS credentials for cross-account scanning (STS AssumeRole)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
       - ./backend:/app/backend
       - ./blockchain_audit:/app/blockchain_audit

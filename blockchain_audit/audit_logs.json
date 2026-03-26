@@ -12,18 +12,18 @@
   },
   {
     "id": 1,
-    "timestamp": "2026-03-21T16:16:00.012562",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-24T08:58:28.796530",
+    "resource_name": "cloudtwin-insecure-demo-919123922101",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 56.0,
+    "checks_passed": 3,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -41,10 +41,10 @@
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -77,23 +77,23 @@
       }
     },
     "previous_hash": "d894de287307c6e646599a69ef054fe0bf9c157e46d2d396232d320dbe326b3d",
-    "current_hash": "10699b47dda745b45651e7b46a4e13767ee6383cea55d9ae0e6f98422d8f07ee",
-    "merkle_root": "f58fb2fa42acbc799c7f421a02eacdad5d0b899f490a8ef306608df96b66b71c"
+    "current_hash": "bfba7315c8afd78207cdba0bf670fb325c2800f87cb651c9ba7c515a2db51099",
+    "merkle_root": "a65f3bd062df1fa1abece75d316559230663602fa9e3823959e7f727b5448da0"
   },
   {
     "id": 2,
-    "timestamp": "2026-03-21T16:19:20.885733",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-24T08:58:28.833683",
+    "resource_name": "cloudtwin-secure-demo-919123922101",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -104,17 +104,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -146,24 +146,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "10699b47dda745b45651e7b46a4e13767ee6383cea55d9ae0e6f98422d8f07ee",
-    "current_hash": "606efd2dca36cc6c5cf5ce7eb6b08c6f738a3179ab805ac35f8c0a3eb4fff75c",
-    "merkle_root": "feb4201b326f0dfef17fe59b5ffe81c3c2b7be174d797cf9a9ca41d76dbd0fb5"
+    "previous_hash": "bfba7315c8afd78207cdba0bf670fb325c2800f87cb651c9ba7c515a2db51099",
+    "current_hash": "64fda1e52b8963b91bf09ec459351e752899cba7b12f35816a3dc1d42c44ca0a",
+    "merkle_root": "33b97eb9b86bef7d141c4bb00cba79609a88e68d99fb2961a4ba4618040e542c"
   },
   {
     "id": 3,
-    "timestamp": "2026-03-21T16:19:46.624485",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-24T10:59:54.071133",
+    "resource_name": "cloudtwin-insecure-demo-919123922101",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 56.0,
+    "checks_passed": 3,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -181,10 +181,10 @@
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -216,24 +216,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "606efd2dca36cc6c5cf5ce7eb6b08c6f738a3179ab805ac35f8c0a3eb4fff75c",
-    "current_hash": "ed0922cc38a2ba793ce3438bbcb87b66945167336f1bdf70361389780bf7d5d0",
-    "merkle_root": "055498a5fb17ac7d52df81a12147100463d40c6c01780ec667504b7e342138df"
+    "previous_hash": "64fda1e52b8963b91bf09ec459351e752899cba7b12f35816a3dc1d42c44ca0a",
+    "current_hash": "0add21b0d1ea00b466ab3f28a1024717aa379971769e5f09eb1cfadadbf14c39",
+    "merkle_root": "55531427091300e4664754289652899cfeacaaa4d6f12cad05c9c1854d8adfe7"
   },
   {
     "id": 4,
-    "timestamp": "2026-03-21T16:19:50.066807",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-24T11:00:22.159998",
+    "resource_name": "cloudtwin-insecure-demo-919123922101",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 56.0,
+    "checks_passed": 3,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -251,10 +251,10 @@
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -286,24 +286,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "ed0922cc38a2ba793ce3438bbcb87b66945167336f1bdf70361389780bf7d5d0",
-    "current_hash": "d5e07c09b652edd4bd8c99c7b33ccb978751073710a5b896424144f48e243677",
-    "merkle_root": "40db8b2e12b7e383d64454c96aa185a5013074641b4f5602099579045d0f87db"
+    "previous_hash": "0add21b0d1ea00b466ab3f28a1024717aa379971769e5f09eb1cfadadbf14c39",
+    "current_hash": "6223cc2792eef40d68e7dddedb08d5da085241ca102afe524ac36044c02aa8b5",
+    "merkle_root": "29da0fb8069ff2a8129fca2c27c06a3c89b038bc5232b5cfd6ebeba0e24a2740"
   },
   {
     "id": 5,
-    "timestamp": "2026-03-21T16:22:27.966334",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-24T11:00:22.203111",
+    "resource_name": "cloudtwin-secure-demo-919123922101",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -314,17 +314,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -356,24 +356,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "d5e07c09b652edd4bd8c99c7b33ccb978751073710a5b896424144f48e243677",
-    "current_hash": "76b77ca207539b1a000282dac9d353c188ebe529f8fbb58574c9d5e6a13798fb",
-    "merkle_root": "eedb7904981e62bf729cad9c667d15b7e00009ab9d7feca0300dc2f537ddde0a"
+    "previous_hash": "6223cc2792eef40d68e7dddedb08d5da085241ca102afe524ac36044c02aa8b5",
+    "current_hash": "0c3c9dccd6710fc10fc3abe2316fa7f8b27ddb078e5de401eaed8d909360a5d4",
+    "merkle_root": "8073b135437896806237aaf0680123f2c3190c1e7867817d1bd120f78c16f04a"
   },
   {
     "id": 6,
-    "timestamp": "2026-03-21T16:23:46.291606",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:20:45.713353",
+    "resource_name": "backup-vault-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -384,17 +384,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -426,24 +426,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "76b77ca207539b1a000282dac9d353c188ebe529f8fbb58574c9d5e6a13798fb",
-    "current_hash": "12f27a345b8479906e61d21efe878fcd08e4d34c7bc67935da18146d574ce898",
-    "merkle_root": "0f469b05237ae14ad85a4dffc90a23e689290fdb3e9672cd63faecf32215ffb4"
+    "previous_hash": "0c3c9dccd6710fc10fc3abe2316fa7f8b27ddb078e5de401eaed8d909360a5d4",
+    "current_hash": "a3bc10be264f154e9cffa7f094a525f6c46287f0f764dbe1c4200153be8129dd",
+    "merkle_root": "0ce74d3b58744cd5ac6367b02882007f3cb7ae22795f5c62c79b7560ebcd9a57"
   },
   {
     "id": 7,
-    "timestamp": "2026-03-21T16:23:52.426349",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:20:45.753154",
+    "resource_name": "dev-test-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 56.0,
+    "checks_passed": 3,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -461,10 +461,10 @@
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -496,24 +496,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "12f27a345b8479906e61d21efe878fcd08e4d34c7bc67935da18146d574ce898",
-    "current_hash": "264b8385ddfe0585641732c286767b8f20f155192e59ef4f59abde093d96fb6d",
-    "merkle_root": "1afa0b29462eedc5b36cdee94bc0fc34ec688337b90a509ecb850576b01a749b"
+    "previous_hash": "a3bc10be264f154e9cffa7f094a525f6c46287f0f764dbe1c4200153be8129dd",
+    "current_hash": "03232e9cd073d0e11a2ae14382518b3c01b2585912bf7f5e28bcab71cedc79ff",
+    "merkle_root": "89a18538894f5dfca7f99ade6ddca6247dedf9221180a06db4e7441f17d7a343"
   },
   {
     "id": 8,
-    "timestamp": "2026-03-21T16:23:54.165964",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:20:45.786287",
+    "resource_name": "logs-archive-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -524,17 +524,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -566,24 +566,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "264b8385ddfe0585641732c286767b8f20f155192e59ef4f59abde093d96fb6d",
-    "current_hash": "969c09105ddb56d9e58fab3d4e0e69325136f4e12a2509c3d21e08ee18e8500d",
-    "merkle_root": "f5ac460ea91e1da3517048d50481d0421bcbb7d2b3714da467bfb65802ca1d0e"
+    "previous_hash": "03232e9cd073d0e11a2ae14382518b3c01b2585912bf7f5e28bcab71cedc79ff",
+    "current_hash": "974f7bd2880aecb1c12baebf82b6d0b821cba4c49220ceccae9b0a0016018788",
+    "merkle_root": "b18f323b0039e3643b3b06ba8d09e9c9f7bd4c4b3ea9a6d7eddb3351bce02a9a"
   },
   {
     "id": 9,
-    "timestamp": "2026-03-21T16:23:56.137200",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:20:45.819873",
+    "resource_name": "public-website-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 56.0,
+    "checks_passed": 3,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -601,10 +601,10 @@
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -636,24 +636,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "969c09105ddb56d9e58fab3d4e0e69325136f4e12a2509c3d21e08ee18e8500d",
-    "current_hash": "bddd9270c6e808e7f2c8a8f6e50e648a479a8d1b0674cf4e6d6e01755f9fd099",
-    "merkle_root": "b7b122027fafa9ed28a5074f83df0ffd85134e2c9d4a758f57e056fbc67dbafc"
+    "previous_hash": "974f7bd2880aecb1c12baebf82b6d0b821cba4c49220ceccae9b0a0016018788",
+    "current_hash": "a0d0e31e5781867b802af5d911a568af7ade4578883ad5ac6cc666f7f3d70681",
+    "merkle_root": "b906731d6f89303df75cb66ceb68e1735426230e796e2e9d99b7a8d9380f2c72"
   },
   {
     "id": 10,
-    "timestamp": "2026-03-21T16:23:57.476612",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:20:45.852175",
+    "resource_name": "secure-data-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -664,17 +664,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -706,24 +706,24 @@
         "control_reference": null
       }
     },
-    "previous_hash": "bddd9270c6e808e7f2c8a8f6e50e648a479a8d1b0674cf4e6d6e01755f9fd099",
-    "current_hash": "f9d698bcb191da79135cdc844dec9e09e9d65ec862754c89909705471969e156",
-    "merkle_root": "23af077899d2bd45c5cbaa12465508384b68ae6a0253926004c26bc4df49391f"
+    "previous_hash": "a0d0e31e5781867b802af5d911a568af7ade4578883ad5ac6cc666f7f3d70681",
+    "current_hash": "0a2aca087f39d629b2ac38d6d003467a43936fa9cbae24b20a035c09052a7058",
+    "merkle_root": "aaf3717046aee34dbac180eec19dcb8b63e2745bddb089a48195881cb18c9a70"
   },
   {
     "id": 11,
-    "timestamp": "2026-03-21T16:24:46.192957",
-    "resource_name": "scan-all",
+    "timestamp": "2026-03-25T05:21:26.689343",
+    "resource_name": "secure-data-bucket",
     "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
+    "compliance_score": 64.0,
+    "checks_passed": 4,
     "checks_total": 8,
     "check_details": {
       "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
+        "status": "PASS",
+        "message": "S3 Encryption at Rest - Compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
         "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
+        "remediation": null,
         "control_reference": null
       },
       "encryption_in_transit": {
@@ -734,17 +734,17 @@
         "control_reference": null
       },
       "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
+        "status": "PASS",
+        "message": "S3 Versioning Enabled - Compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
         "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
+        "remediation": null,
         "control_reference": null
       },
       "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
+        "status": "PASS",
+        "message": "S3 Public Access Block - Compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
         "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
+        "remediation": null,
         "control_reference": null
       },
       "access_logging": {
@@ -776,638 +776,8 @@
         "control_reference": null
       }
     },
-    "previous_hash": "f9d698bcb191da79135cdc844dec9e09e9d65ec862754c89909705471969e156",
-    "current_hash": "3d4d8a63f9d6cd68b6d797f795a8f8c1c06bbadcb532592d5d878d7cc4c5cd84",
-    "merkle_root": "59eb0c744b2f5329f7cb8b90f6fb5cafb4495b7eb736e66e535f485946788402"
-  },
-  {
-    "id": 12,
-    "timestamp": "2026-03-21T16:24:48.748106",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "3d4d8a63f9d6cd68b6d797f795a8f8c1c06bbadcb532592d5d878d7cc4c5cd84",
-    "current_hash": "6b758c7b8cb98ca12f45289879feb8e5cef77b095ec56ca7c8a2ca2fe446edbe",
-    "merkle_root": "9ed40c74196dbbfd1ad38fe85279b0a906542aebaae1fa7fbb0b4f1f0d0400c8"
-  },
-  {
-    "id": 13,
-    "timestamp": "2026-03-21T16:24:53.677816",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "6b758c7b8cb98ca12f45289879feb8e5cef77b095ec56ca7c8a2ca2fe446edbe",
-    "current_hash": "924e9222401d6cf422135f0acda32ef6b845f6646f4d95c310aaa7f88ab1f950",
-    "merkle_root": "a1e69605758be435c30bcdebdff1cfb544c8dabc9a5293aa0136bc7c20f39cfc"
-  },
-  {
-    "id": 14,
-    "timestamp": "2026-03-21T16:33:51.818388",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "924e9222401d6cf422135f0acda32ef6b845f6646f4d95c310aaa7f88ab1f950",
-    "current_hash": "5e22ad3bb3ae856929c28b7c4860ba841b0bac2c90143077bc2f0d5be970004d",
-    "merkle_root": "3382f1625204fc3f18e65af7ba3e1a903883c6a106874d835781a7e3479ab1a3"
-  },
-  {
-    "id": 15,
-    "timestamp": "2026-03-21T16:38:08.007214",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "5e22ad3bb3ae856929c28b7c4860ba841b0bac2c90143077bc2f0d5be970004d",
-    "current_hash": "2b6189aee978599a5d12b06dde1669a53854184fd53c52b17ee79fc0b6d60e1f",
-    "merkle_root": "b467c5fdc2f561ab19c57cae745cf774e31605fe2ca0e51cad5d76eb7496eaca"
-  },
-  {
-    "id": 16,
-    "timestamp": "2026-03-21T16:38:10.605620",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "2b6189aee978599a5d12b06dde1669a53854184fd53c52b17ee79fc0b6d60e1f",
-    "current_hash": "a218df43a91041251fcb804d30d20bc957597d87e32bffa1d8e408612f7a30ec",
-    "merkle_root": "2eef1849ec4118adadbb0048abd01edf482eb5a4c3dc9e885789cb082c2c636f"
-  },
-  {
-    "id": 17,
-    "timestamp": "2026-03-21T16:39:23.712346",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "a218df43a91041251fcb804d30d20bc957597d87e32bffa1d8e408612f7a30ec",
-    "current_hash": "3b589c3c8acd639e8325353d5ec75c3e6faa91dbee3c59452229e8f3dbf545ac",
-    "merkle_root": "5729c40e723852cab978ddc8b3d456787885cd2d3e4e2c0c1dd66f04879bb52e"
-  },
-  {
-    "id": 18,
-    "timestamp": "2026-03-21T16:39:44.773268",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "3b589c3c8acd639e8325353d5ec75c3e6faa91dbee3c59452229e8f3dbf545ac",
-    "current_hash": "61d4b5036bc25fa093b3309f831bc2862f9aff874980414c60d3f79419139567",
-    "merkle_root": "ca3b38a7afc95ee58512fea69b4c6a6b2ce3a826697c29ddd53a98fdf03c4120"
-  },
-  {
-    "id": 19,
-    "timestamp": "2026-03-23T04:37:49.485179",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "61d4b5036bc25fa093b3309f831bc2862f9aff874980414c60d3f79419139567",
-    "current_hash": "62555fa2e16912ac257de1ad95b54ba4ca77aa025be293431c5dd47bb3e8e065",
-    "merkle_root": "8bf178626e4d208441e02a06db66be5cde13d54e90c077435977ad742f6548bc"
-  },
-  {
-    "id": 20,
-    "timestamp": "2026-03-23T04:37:58.757206",
-    "resource_name": "scan-all",
-    "resource_type": "s3_bucket",
-    "compliance_score": 16.0,
-    "checks_passed": 1,
-    "checks_total": 8,
-    "check_details": {
-      "encryption_at_rest": {
-        "status": "FAIL",
-        "message": "S3 Encryption at Rest - Non-compliant [ISO 27001 A.10.1.1 | NIST 800-53 SC-28]",
-        "severity": "high",
-        "remediation": "[S3-001] Enable AES-256 (SSE-S3) or AWS KMS (SSE-KMS) server-side encryption on the bucket",
-        "control_reference": null
-      },
-      "encryption_in_transit": {
-        "status": "FAIL",
-        "message": "S3 Encryption in Transit - Non-compliant [ISO 27001 A.14.1.2 | NIST 800-53 SC-8]",
-        "severity": "high",
-        "remediation": "[S3-002] Add bucket policy denying requests without aws:SecureTransport condition",
-        "control_reference": null
-      },
-      "versioning": {
-        "status": "FAIL",
-        "message": "S3 Versioning Enabled - Non-compliant [ISO 27001 A.12.3.1 | NIST 800-53 CP-9]",
-        "severity": "medium",
-        "remediation": "[S3-003] Enable bucket versioning to protect against accidental deletion and overwrites",
-        "control_reference": null
-      },
-      "public_access_block": {
-        "status": "FAIL",
-        "message": "S3 Public Access Block - Non-compliant [ISO 27001 A.9.4.1 | NIST 800-53 AC-3]",
-        "severity": "critical",
-        "remediation": "[S3-004] Enable BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, and RestrictPublicBuckets",
-        "control_reference": null
-      },
-      "access_logging": {
-        "status": "FAIL",
-        "message": "S3 Access Logging - Non-compliant [ISO 27001 A.12.4.1 | NIST 800-53 AU-2]",
-        "severity": "medium",
-        "remediation": "[S3-005] Enable server access logging and direct logs to a dedicated logging bucket",
-        "control_reference": null
-      },
-      "mfa_delete": {
-        "status": "FAIL",
-        "message": "S3 MFA Delete - Non-compliant [ISO 27001 A.9.4.2 | NIST 800-53 IA-2]",
-        "severity": "medium",
-        "remediation": "[S3-006] Enable MFA Delete on the bucket versioning configuration",
-        "control_reference": null
-      },
-      "lifecycle_policy": {
-        "status": "FAIL",
-        "message": "S3 Lifecycle Policy - Non-compliant [ISO 27001 A.8.3.2 | NIST 800-53 MP-6]",
-        "severity": "low",
-        "remediation": "[S3-007] Configure lifecycle rules for transitioning or expiring objects",
-        "control_reference": null
-      },
-      "bucket_policy_restrictions": {
-        "status": "PASS",
-        "message": "S3 Bucket Policy Restrictions - Compliant [ISO 27001 A.9.1.2 | NIST 800-53 AC-6]",
-        "severity": "high",
-        "remediation": null,
-        "control_reference": null
-      }
-    },
-    "previous_hash": "62555fa2e16912ac257de1ad95b54ba4ca77aa025be293431c5dd47bb3e8e065",
-    "current_hash": "99fbe6b478e4e447e3e33feb2285defddeb3748a7e73b547c073d56af1651bcf",
-    "merkle_root": "84cc2c07832b562359db33d9eeb558023140e2ffdd7f55c06111c39e88687d20"
+    "previous_hash": "0a2aca087f39d629b2ac38d6d003467a43936fa9cbae24b20a035c09052a7058",
+    "current_hash": "730c37dba7efb752cc6e4d6ad25f7d5a1db766d3e486d12f10a7e3977bdb3fbb",
+    "merkle_root": "156314e5a52e71502741515b3e6bcfbe3627a4716a872c3f0131e1911ee6959f"
   }
 ]

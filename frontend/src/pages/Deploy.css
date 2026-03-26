@@ -12,23 +12,9 @@
   padding: 18px;
 }
 
-.arch-icon {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
-}
-
-.arch-title {
-  color: #58a6ff;
-  font-size: 0.88rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.arch-desc {
-  color: #8b949e;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
+.arch-icon { font-size: 1.4rem; margin-bottom: 8px; }
+.arch-title { color: #58a6ff; font-size: 0.88rem; font-weight: 700; margin-bottom: 6px; }
+.arch-desc { color: #8b949e; font-size: 0.75rem; line-height: 1.5; }
 
 .deploy-section, .reports-section {
   background: #161b22;
@@ -43,11 +29,12 @@
   font-size: 0.9rem;
   font-weight: 600;
   margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.status-panel {
-  margin-bottom: 14px;
-}
+.status-panel { margin-bottom: 14px; }
 
 .deploy-status {
   display: inline-block;
@@ -60,17 +47,6 @@
 
 .deploy-status.deployed { background: #0d2016; color: #3fb950; }
 .deploy-status.idle     { background: #21262d; color: #8b949e; }
-
-.resource-list {
-  padding-left: 16px;
-  margin: 6px 0;
-}
-
-.resource-list li {
-  color: #8b949e;
-  font-size: 0.8rem;
-  margin-bottom: 2px;
-}
 
 .btn-row {
   display: flex;
@@ -93,8 +69,11 @@
 
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn.primary   { background: #1f6feb; color: #fff; }
+.btn.primary:hover:not(:disabled) { background: #388bfd; }
 .btn.secondary { background: #21262d; color: #c9d1d9; }
+.btn.secondary:hover:not(:disabled) { background: #30363d; }
 .btn.danger    { background: #3a1a1a; color: #f85149; }
+.btn.danger:hover:not(:disabled) { background: #4a2020; }
 
 .success-msg {
   background: #0d2016;
@@ -114,8 +93,132 @@
   font-size: 0.85rem;
 }
 
-.reports-desc {
+.reports-desc { color: #8b949e; font-size: 0.82rem; margin: 0 0 12px; }
+
+/* Terraform upload */
+.tf-desc { color: #8b949e; font-size: 0.82rem; margin: 0 0 12px; }
+.tf-upload-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.tf-input {
   color: #8b949e;
   font-size: 0.82rem;
-  margin: 0 0 12px;
+}
+
+/* Average score badge */
+.avg-score {
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+.avg-score.good { background: #0d2016; color: #3fb950; }
+.avg-score.warn { background: #2a1f00; color: #d29922; }
+.avg-score.bad  { background: #3a1a1a; color: #f85149; }
+
+/* Twin results */
+.twin-results {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.twin-resource-card {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.twin-resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.twin-resource-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+
+.twin-resource-score {
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 8px;
+}
+.twin-resource-score.good { background: #0d2016; color: #3fb950; }
+.twin-resource-score.warn { background: #2a1f00; color: #d29922; }
+.twin-resource-score.bad  { background: #3a1a1a; color: #f85149; }
+
+.twin-resource-summary {
+  color: #8b949e;
+  font-size: 0.82rem;
+  margin-bottom: 10px;
+}
+
+/* Individual checks */
+.twin-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.twin-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.twin-check.pass { background: #0d201622; }
+.twin-check.fail { background: #3a1a1a22; }
+
+.twin-check-badge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 38px;
+  text-align: center;
+}
+.twin-check-badge.pass { background: #238636; color: #fff; }
+.twin-check-badge.fail { background: #da3633; color: #fff; }
+
+.twin-check-msg { color: #8b949e; }
+
+/* Remediation */
+.twin-remediation {
+  background: #2a1f0044;
+  border-left: 3px solid #d29922;
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.8rem;
+  color: #d29922;
+}
+.twin-remediation ul { padding-left: 16px; margin-top: 4px; }
+.twin-remediation li { margin-bottom: 2px; }
+
+/* Resource grid */
+.resource-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.resource-chip {
+  background: #0d1117;
+  border: 1px solid #21262d;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  color: #58a6ff;
+  font-family: monospace;
 }

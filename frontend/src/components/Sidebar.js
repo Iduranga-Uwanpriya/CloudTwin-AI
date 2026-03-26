@@ -4,11 +4,11 @@ import "./Sidebar.css";
 
 const links = [
   { to: "/", label: "Dashboard", icon: "⬡" },
-  { to: "/aws", label: "AWS Accounts", icon: "☁" },
+  { to: "/aws", label: "Connect AWS", icon: "☁" },
   { to: "/compliance", label: "Compliance", icon: "✔" },
+  { to: "/deploy", label: "Digital Twin", icon: "⎈" },
   { to: "/anomaly", label: "Anomaly Detection", icon: "⚠" },
   { to: "/audit", label: "Audit Trail", icon: "⛓" },
-  { to: "/deploy", label: "Digital Twin", icon: "⎈" },
 ];
 
 export default function Sidebar({ user, onLogout }) {

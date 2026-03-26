@@ -15,7 +15,7 @@ export default function AuditTrail() {
     try {
       const [t, s] = await Promise.all([audit.trail(), audit.stats()]);
       setTrail(t.data);
-      setStats(s.data);
+      setStats(s.data?.blockchain_statistics || s.data);
     } catch (e) {
       setError("Failed to load audit trail");
     } finally {
@@ -49,7 +49,7 @@ export default function AuditTrail() {
             </div>
           )}
           <div className="a-stat-item">
-            <span className="a-stat-val">{stats.avg_compliance_score?.toFixed(1) ?? "—"}%</span>
+            <span className="a-stat-val">{(stats.average_compliance ?? stats.avg_compliance_score)?.toFixed(1) ?? "—"}%</span>
             <span className="a-stat-label">Avg Compliance</span>
           </div>
         </div>

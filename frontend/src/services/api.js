@@ -38,16 +38,20 @@ export const scanner = {
   scan: (accountId) => api.post(`/scanner/${accountId}/scan`),
   history: (accountId) => api.get(`/scanner/${accountId}/history`),
   findings: (scanId) => api.get(`/scanner/results/${scanId}`),
+  generateTerraform: (accountId) => api.post(`/scanner/${accountId}/generate-terraform`),
+  cloneToTwin: (accountId) => api.post(`/scanner/${accountId}/clone-to-twin`),
+  cloudtrailThreats: (accountId, hours = 24) => api.post(`/scanner/${accountId}/cloudtrail-threats?hours=${hours}`),
+  vpcFlowLogAnalysis: (accountId, hours = 1) => api.post(`/scanner/${accountId}/vpc-flowlog-analysis?hours=${hours}`),
 };
 
 // ── Compliance (Terraform / LocalStack) ─────────────────────
 export const compliance = {
-  scan: (bucket) => api.get(`/compliance/scan/${bucket}`),
-  scanAll: () => api.get("/compliance/scan-all"),
+  scan: (bucket) => api.get(`/compliance/${bucket}`),
+  scanAll: () => api.get("/compliance/"),
   scanTerraform: (file) => {
     const fd = new FormData();
     fd.append("file", file);
-    return api.post("/compliance/terraform", fd);
+    return api.post("/deploy/terraform", fd);
   },
 };
 
@@ -82,4 +86,4 @@ export const reports = {
 };
 
 // ── Health ──────────────────────────────────────────────────
-export const health = () => api.get("/health");
+export const health = () => axios.get("/health");

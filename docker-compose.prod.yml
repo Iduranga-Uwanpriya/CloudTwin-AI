@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cloudtwin-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cloudtwin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in GitHub Secrets}
+      POSTGRES_DB: ${POSTGRES_DB:-cloudtwin_db}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  app:
+    image: ghcr.io/${GITHUB_REPOSITORY:-cloudtwin-ai}:latest
+    container_name: cloudtwin-app
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "80:80"
+      - "8000:8000"
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-cloudtwin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-cloudtwin_db}
+      # Auth
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in GitHub Secrets}
+      # AWS (for live cross-account scanning)
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      # LocalStack (optional, dev/staging only)
+      LOCALSTACK_ENDPOINT: ${LOCALSTACK_ENDPOINT:-}
+      # App
+      PYTHONPATH: /app
+
+volumes:
+  pgdata:

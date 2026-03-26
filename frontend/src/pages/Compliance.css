@@ -137,8 +137,86 @@
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  margin-top: 6px;
 }
+
+.check-resource-type {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #484f58;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.check-resource-id {
+  font-family: monospace;
+  color: #58a6ff;
+  font-size: 0.75rem;
+}
+.check-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.check-fw {
+  display: inline-block;
+  background: #161b22;
+  border: 1px solid #21262d;
+  color: #8b949e;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.6rem;
+}
+/* ── Scan History Cards ─────────────────────── */
+.scan-history-card {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #30363d;
+  transition: border-color 0.15s, background 0.15s;
+}
+.scan-history-card:hover { border-color: #484f58; background: #0d1117; }
+.scan-history-card.active-scan {
+  border-color: #58a6ff;
+  background: #161b2288;
+}
+.scan-history-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.scan-history-date { color: #c9d1d9; flex: 1; font-size: 0.85rem; }
+.scan-history-meta { color: #8b949e; font-size: 0.75rem; }
+.scan-history-score { font-weight: 700; font-size: 0.95rem; }
+.scan-history-resources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.resource-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #0d1117;
+  border: 1px solid #21262d;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  color: #8b949e;
+  font-family: monospace;
+}
+.resource-tag-type {
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+}
+.rt-s3 .resource-tag-type { color: #3fb950; }
+.rt-ec2 .resource-tag-type { color: #58a6ff; }
+.rt-rds .resource-tag-type { color: #d29922; }
+.rt-vpc .resource-tag-type { color: #bc8cff; }
+.rt-security_group .resource-tag-type { color: #f85149; }
 
 .recommendations {
   border-top: 1px solid #21262d;

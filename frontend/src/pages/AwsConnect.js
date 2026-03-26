@@ -11,6 +11,8 @@ export default function AwsConnect() {
   const [connecting, setConnecting] = useState(false);
   const [scanning, setScanning] = useState({});
   const [scanResults, setScanResults] = useState({});
+  const [cloning, setCloning] = useState({});
+  const [cloneResults, setCloneResults] = useState({});
 
   useEffect(() => {
     loadAccounts();
@@ -62,7 +64,9 @@ export default function AwsConnect() {
     setScanning((s) => ({ ...s, [accountId]: true }));
     try {
       const { data } = await scanner.scan(accountId);
-      setScanResults((r) => ({ ...r, [accountId]: data }));
+      // Fetch detailed findings
+      const { data: details } = await scanner.findings(data.scan_id);
+      setScanResults((r) => ({ ...r, [accountId]: { ...data, findings: details.findings } }));
       loadAccounts();
     } catch (e) {
       setScanResults((r) => ({
@@ -71,6 +75,36 @@ export default function AwsConnect() {
       }));
     } finally {
       setScanning((s) => ({ ...s, [accountId]: false }));
+    }
+  };
+
+  const handleCloneToTwin = async (accountId) => {
+    setCloning((s) => ({ ...s, [accountId]: true }));
+    try {
+      const { data } = await scanner.cloneToTwin(accountId);
+      setCloneResults((r) => ({ ...r, [accountId]: data }));
+    } catch (e) {
+      setCloneResults((r) => ({
+        ...r,
+        [accountId]: { error: e.response?.data?.detail || "Clone failed" },
+      }));
+    } finally {
+      setCloning((s) => ({ ...s, [accountId]: false }));
+    }
+  };
+
+  const handleDownloadTerraform = async (accountId) => {
+    try {
+      const { data } = await scanner.generateTerraform(accountId);
+      const blob = new Blob([data.terraform], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "infrastructure.tf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError("Failed to generate Terraform");
     }
   };
 
@@ -162,6 +196,19 @@ export default function AwsConnect() {
                 >
                   {scanning[a.id] ? "Scanning..." : "Scan Now"}
                 </button>
+                <button
+                  className="btn secondary"
+                  onClick={() => handleCloneToTwin(a.id)}
+                  disabled={cloning[a.id]}
+                >
+                  {cloning[a.id] ? "Cloning..." : "Clone to Twin"}
+                </button>
+                <button
+                  className="btn secondary"
+                  onClick={() => handleDownloadTerraform(a.id)}
+                >
+                  Download .tf
+                </button>
                 <button className="btn danger" onClick={() => handleDisconnect(a.id)}>
                   Disconnect
                 </button>
@@ -172,19 +219,86 @@ export default function AwsConnect() {
                   {scanResults[a.id].error ? (
                     <div className="error-msg">{scanResults[a.id].error}</div>
                   ) : (
-                    <div className="scan-summary">
-                      <div className="scan-score">
-                        <span className={`score ${scanResults[a.id].overall_score >= 80 ? "good" : scanResults[a.id].overall_score >= 50 ? "warn" : "bad"}`}>
-                          {scanResults[a.id].overall_score}%
-                        </span>
-                        <span className="score-label">Compliance Score</span>
+                    <>
+                      <div className="scan-summary">
+                        <div className="scan-score">
+                          <span className={`score ${scanResults[a.id].overall_score >= 80 ? "good" : scanResults[a.id].overall_score >= 50 ? "warn" : "bad"}`}>
+                            {scanResults[a.id].overall_score}%
+                          </span>
+                          <span className="score-label">Compliance Score</span>
+                        </div>
+                        <div className="scan-stats">
+                          <div><strong>{scanResults[a.id].resources_scanned}</strong> resources</div>
+                          <div><strong>{scanResults[a.id].total_checks}</strong> checks</div>
+                          <div className="pass">{scanResults[a.id].passed_checks} passed</div>
+                          <div className="fail">{scanResults[a.id].failed_checks} failed</div>
+                        </div>
                       </div>
-                      <div className="scan-stats">
-                        <div><strong>{scanResults[a.id].resources_scanned}</strong> resources</div>
-                        <div><strong>{scanResults[a.id].total_checks}</strong> checks</div>
-                        <div className="pass">{scanResults[a.id].passed_checks} passed</div>
-                        <div className="fail">{scanResults[a.id].failed_checks} failed</div>
+
+                      {scanResults[a.id].findings && scanResults[a.id].findings.length > 0 && (
+                        <div className="findings-table-wrap">
+                          <h4 className="findings-title">Detailed Findings</h4>
+                          <table className="findings-table">
+                            <thead>
+                              <tr>
+                                <th>Status</th>
+                                <th>Severity</th>
+                                <th>Resource</th>
+                                <th>Check</th>
+                                <th>Framework</th>
+                                <th>Remediation</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {scanResults[a.id].findings.map((f, i) => (
+                                <tr key={i} className={f.status === "PASS" ? "row-pass" : "row-fail"}>
+                                  <td>
+                                    <span className={`status-badge ${f.status.toLowerCase()}`}>
+                                      {f.status === "PASS" ? "\u2713" : "\u2717"} {f.status}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span className={`severity-badge sev-${f.severity}`}>
+                                      {f.severity}
+                                    </span>
+                                  </td>
+                                  <td className="resource-cell">
+                                    <span className="resource-type">{f.resource_type}</span>
+                                    <span className="resource-id">{f.resource_id}</span>
+                                  </td>
+                                  <td>{f.rule_title}</td>
+                                  <td className="framework-cell">
+                                    {f.iso_control && <span className="fw-tag">ISO {f.iso_control}</span>}
+                                    {f.nist_control && <span className="fw-tag">NIST {f.nist_control}</span>}
+                                  </td>
+                                  <td className="remediation-cell">{f.status === "FAIL" ? f.remediation : "\u2014"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {cloneResults[a.id] && (
+                <div className={`scan-result ${cloneResults[a.id].error ? "scan-error" : ""}`}>
+                  {cloneResults[a.id].error ? (
+                    <div className="error-msg">{cloneResults[a.id].error}</div>
+                  ) : (
+                    <div className="clone-summary">
+                      <div className="clone-header">Digital Twin Cloned</div>
+                      <div className="clone-stats">
+                        <div><strong>{cloneResults[a.id].cloned_resources?.length || 0}</strong> resources cloned to LocalStack</div>
+                        {cloneResults[a.id].compliance_preview?.map((r) => (
+                          <div key={r.bucket} className="clone-item">
+                            {r.bucket}: <span className={r.score >= 80 ? "pass" : "fail"}>{r.score.toFixed(0)}%</span>
+                          </div>
+                        ))}
                       </div>
+                      <p className="clone-hint">Go to Compliance page → Scan All to see full results in the twin</p>
                     </div>
                   )}
                 </div>

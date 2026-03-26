@@ -48,10 +48,10 @@ def connect_aws_account(
     Returns the external_id and CloudFormation template URL needed
     to create the read-only IAM role in the customer's account.
     """
-    # Check duplicate
+    # Check duplicate (only among active accounts)
     existing = (
         db.query(AwsAccount)
-        .filter(AwsAccount.user_id == current_user.id, AwsAccount.role_arn == body.role_arn)
+        .filter(AwsAccount.user_id == current_user.id, AwsAccount.role_arn == body.role_arn, AwsAccount.is_active == True)
         .first()
     )
     if existing:
@@ -100,7 +100,7 @@ def disconnect_aws_account(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Disconnect (soft-delete) an AWS account."""
+    """Disconnect and remove an AWS account."""
     account = (
         db.query(AwsAccount)
         .filter(AwsAccount.id == account_id, AwsAccount.user_id == current_user.id)
@@ -109,7 +109,7 @@ def disconnect_aws_account(
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
-    account.is_active = False
+    db.delete(account)
     db.commit()
     return {"status": "disconnected", "account_id": account_id}
 
@@ -130,8 +130,7 @@ def get_cloudformation_template():
             },
             "CloudTwinAccountId": {
                 "Type": "String",
-                "Default": "YOUR_CLOUDTWIN_AWS_ACCOUNT_ID",
-                "Description": "CloudTwin AI AWS Account ID",
+                "Description": "The AWS Account ID where CloudTwin AI backend runs (your account ID for self-hosted)",
             },
         },
         "Resources": {

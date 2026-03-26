@@ -14,11 +14,14 @@ from botocore.exceptions import ClientError
 from backend.app.db.models import AwsAccount
 
 
-def get_aws_session(account: AwsAccount, region: str = "us-east-1") -> boto3.Session:
+def get_aws_session(account: AwsAccount, region: str = None) -> boto3.Session:
     """
     Assume the cross-account IAM role and return a boto3 session
     with temporary credentials. Never stores credentials.
     """
+    import os
+    if region is None:
+        region = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
     sts = boto3.client("sts")
     assumed = sts.assume_role(
         RoleArn=account.role_arn,
@@ -35,11 +38,14 @@ def get_aws_session(account: AwsAccount, region: str = "us-east-1") -> boto3.Ses
     )
 
 
-def scan_aws_account(account: AwsAccount, region: str = "us-east-1") -> dict:
+def scan_aws_account(account: AwsAccount, region: str = None) -> dict:
     """
     Full scan of an AWS account. Returns inventory + compliance-ready resource configs.
     """
+    import os
     start = time.time()
+    if region is None:
+        region = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
     session = get_aws_session(account, region)
     results = {
         "account_id": account.aws_account_id,
