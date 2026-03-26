@@ -1,0 +1,1 @@
+["dur", "sbytes", "dbytes", "sttl", "dttl", "sloss", "dloss", "sload", "dload", "spkts", "dpkts", "sinpkt", "dinpkt", "sjit", "djit", "tcprtt", "ct_srv_src", "ct_dst_ltm", "proto_icmp", "proto_tcp", "proto_udp", "service_-", "service_dns", "service_ftp", "service_http", "service_https", "service_ssh", "state_CON", "state_FIN", "state_INT", "state_REQ", "state_RST"]
