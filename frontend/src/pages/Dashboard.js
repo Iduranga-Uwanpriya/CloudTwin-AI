@@ -112,8 +112,8 @@ export default function Dashboard() {
                   </tr>
                   <tr>
                     <td>LocalStack (Twin)</td>
-                    <td><span className={`badge ${sysHealth?.localstack_connected ? "green" : "red"}`}>
-                      {sysHealth?.localstack_connected ? "Online" : "Offline"}
+                    <td><span className={`badge ${sysHealth?.localstack_connected ? "green" : "gray"}`}>
+                      {sysHealth?.localstack_connected ? "Online" : "N/A (Prod)"}
                     </span></td>
                   </tr>
                   <tr>

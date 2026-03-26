@@ -67,9 +67,9 @@ def health_check():
     Tests system components
     """
     localstack_connected = test_localstack_connection()
-    
+
     return HealthCheck(
-        status="healthy" if localstack_connected else "degraded",
+        status="healthy",
         service=settings.APP_NAME,
         version=settings.APP_VERSION,
         localstack_connected=localstack_connected,
