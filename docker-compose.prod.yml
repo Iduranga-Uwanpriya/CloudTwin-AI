@@ -24,8 +24,12 @@ services:
       - "80:80"
       - "8000:8000"
     environment:
-      # Database
-      DATABASE_URL: postgresql://${POSTGRES_USER:-cloudtwin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-cloudtwin_db}
+      # Database (separate vars to avoid special chars breaking URL)
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-cloudtwin}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB:-cloudtwin_db}
       # Auth
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in GitHub Secrets}
       # AWS (for live cross-account scanning)

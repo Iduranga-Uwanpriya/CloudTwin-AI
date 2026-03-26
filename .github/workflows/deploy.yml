@@ -77,38 +77,12 @@ jobs:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
           password: ${{ secrets.DO_PASSWORD }}
-          script: |
+          script: |-
             cd /opt/cloudtwin-ai
-
-            # ── Write .env from GitHub Secrets ──
-            cat > .env << 'ENVEOF'
-            GITHUB_REPOSITORY=iduranga-uwanpriya/research
-
-            # ── PostgreSQL ──
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-
-            # ── JWT Auth ──
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-
-            # ── AWS Credentials (for live scanning) ──
-            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}
-
-            # ── LocalStack (leave empty to skip in prod) ──
-            LOCALSTACK_ENDPOINT=${{ secrets.LOCALSTACK_ENDPOINT }}
-            ENVEOF
-
+            printf '%s\n' 'GITHUB_REPOSITORY=iduranga-uwanpriya/research' 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}' 'POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}' 'POSTGRES_DB=${{ secrets.POSTGRES_DB }}' 'JWT_SECRET=${{ secrets.JWT_SECRET }}' 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' 'AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}' 'LOCALSTACK_ENDPOINT=' > .env
             chmod 600 .env
-
-            # ── Log in to GHCR ──
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # ── Pull latest image and restart ──
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
-
             echo "Deployed successfully"
