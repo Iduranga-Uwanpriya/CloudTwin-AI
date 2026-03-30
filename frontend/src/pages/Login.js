@@ -2,6 +2,16 @@ import React, { useState } from "react";
 import { auth } from "../services/api";
 import "./Login.css";
 
+function formatApiError(err, fallback = "Authentication failed") {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const messages = detail.map((item) => item?.msg).filter(Boolean);
+    if (messages.length > 0) return messages.join(", ");
+  }
+  return fallback;
+}
+
 export default function Login({ onLogin }) {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -26,7 +36,7 @@ export default function Login({ onLogin }) {
       localStorage.setItem("user_email", res.data.email);
       onLogin(res.data);
     } catch (e) {
-      setError(e.response?.data?.detail || "Authentication failed");
+      setError(formatApiError(e, "Authentication failed"));
     } finally {
       setLoading(false);
     }

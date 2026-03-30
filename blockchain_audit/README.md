@@ -52,9 +52,9 @@ trail = blockchain_logger.get_audit_trail(limit=10)
 ```python
 is_valid, error = blockchain_logger.verify_chain_integrity()
 if is_valid:
-    print("✅ Blockchain is valid")
+    print(" Blockchain is valid")
 else:
-    print(f"❌ Blockchain tampered: {error}")
+    print(f" Blockchain tampered: {error}")
 ```
 
 ## Storage

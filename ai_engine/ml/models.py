@@ -29,9 +29,9 @@ from sklearn.metrics import (
     classification_report,
 )
 
-# ---------------------------------------------------------------------------
+
 # Paths
-# ---------------------------------------------------------------------------
+
 _SAVED_MODELS_DIR = Path(__file__).parent.parent / "saved_models"
 
 
@@ -40,9 +40,9 @@ def _ensure_dir(path: Path) -> Path:
     return path
 
 
-# ---------------------------------------------------------------------------
+
 # Base class
-# ---------------------------------------------------------------------------
+
 
 class BaseDetector:
     """Abstract base for anomaly detectors."""
@@ -54,7 +54,7 @@ class BaseDetector:
         self.model = None
         self.is_trained = False
 
-    # -- public API ----------------------------------------------------------
+    #  public API 
 
     def train(self, X_train: np.ndarray, **kwargs) -> "BaseDetector":
         raise NotImplementedError
@@ -93,7 +93,7 @@ class BaseDetector:
         )
         return metrics
 
-    # -- persistence ---------------------------------------------------------
+    # persistence 
 
     def save(self, path: Optional[Path] = None) -> Path:
         path = path or (_ensure_dir(self.model_dir) / f"{self.name}_model.joblib")
@@ -115,9 +115,8 @@ class BaseDetector:
         return self.model_path().exists()
 
 
-# ---------------------------------------------------------------------------
 # Isolation Forest
-# ---------------------------------------------------------------------------
+
 
 class IsolationForestDetector(BaseDetector):
     """Anomaly detection via Isolation Forest."""
@@ -149,9 +148,9 @@ class IsolationForestDetector(BaseDetector):
         return self.model.score_samples(X)
 
 
-# ---------------------------------------------------------------------------
+
 # One-Class SVM
-# ---------------------------------------------------------------------------
+
 
 class OneClassSVMDetector(BaseDetector):
     """Anomaly detection via One-Class SVM with RBF kernel."""
@@ -182,9 +181,9 @@ class OneClassSVMDetector(BaseDetector):
         return self.model.score_samples(X)
 
 
-# ---------------------------------------------------------------------------
-# Autoencoder (MLPRegressor-based)
-# ---------------------------------------------------------------------------
+
+# Autoencoder 
+
 
 class AutoencoderDetector(BaseDetector):
     """
@@ -256,9 +255,9 @@ class AutoencoderDetector(BaseDetector):
         return self
 
 
-# ---------------------------------------------------------------------------
+
 # Ensemble Detector
-# ---------------------------------------------------------------------------
+
 
 class EnsembleDetector:
     """

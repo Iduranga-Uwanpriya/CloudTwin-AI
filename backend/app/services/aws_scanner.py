@@ -54,7 +54,6 @@ def scan_aws_account(account: AwsAccount, region: str = None) -> dict:
         "errors": [],
     }
 
-    # Scan each resource type, catch individual failures
     scanners = [
         ("s3", _scan_s3),
         ("ec2", _scan_ec2),
@@ -84,7 +83,7 @@ def scan_aws_account(account: AwsAccount, region: str = None) -> dict:
     return results
 
 
-# ─────────────────────────── S3 ───────────────────────────
+#  S3 
 
 def _scan_s3(session: boto3.Session) -> list[dict]:
     s3 = session.client("s3")
@@ -95,14 +94,12 @@ def _scan_s3(session: boto3.Session) -> list[dict]:
         name = bucket["Name"]
         config = {"name": name, "created": str(bucket.get("CreationDate", ""))}
 
-        # Versioning
         try:
             v = s3.get_bucket_versioning(Bucket=name)
             config["versioning"] = v.get("Status", "Disabled")
         except Exception:
             config["versioning"] = "Unknown"
 
-        # Encryption
         try:
             enc = s3.get_bucket_encryption(Bucket=name)
             config["encryption"] = True
@@ -113,21 +110,18 @@ def _scan_s3(session: boto3.Session) -> list[dict]:
             else:
                 config["encryption"] = "Unknown"
 
-        # Public access block
         try:
             pab = s3.get_public_access_block(Bucket=name)
             config["public_access_block"] = pab.get("PublicAccessBlockConfiguration", {})
         except ClientError:
             config["public_access_block"] = None
 
-        # Logging
         try:
             log = s3.get_bucket_logging(Bucket=name)
             config["logging"] = bool(log.get("LoggingEnabled"))
         except Exception:
             config["logging"] = False
 
-        # ACL
         try:
             acl = s3.get_bucket_acl(Bucket=name)
             grants = acl.get("Grants", [])
@@ -143,7 +137,7 @@ def _scan_s3(session: boto3.Session) -> list[dict]:
     return resources
 
 
-# ─────────────────────────── EC2 ───────────────────────────
+#  EC2 
 
 def _scan_ec2(session: boto3.Session) -> list[dict]:
     ec2 = session.client("ec2")
@@ -167,7 +161,7 @@ def _scan_ec2(session: boto3.Session) -> list[dict]:
     return instances
 
 
-# ─────────────────────────── IAM ───────────────────────────
+#  IAM 
 
 def _scan_iam(session: boto3.Session) -> list[dict]:
     iam = session.client("iam")
@@ -181,14 +175,12 @@ def _scan_iam(session: boto3.Session) -> list[dict]:
             "password_last_used": str(user.get("PasswordLastUsed", "")),
         }
 
-        # MFA
         try:
             mfa = iam.list_mfa_devices(UserName=username)
             u["mfa_enabled"] = len(mfa.get("MFADevices", [])) > 0
         except Exception:
             u["mfa_enabled"] = False
 
-        # Access keys
         try:
             keys = iam.list_access_keys(UserName=username)
             u["access_keys"] = [
@@ -202,7 +194,6 @@ def _scan_iam(session: boto3.Session) -> list[dict]:
         except Exception:
             u["access_keys"] = []
 
-        # Inline policies
         try:
             policies = iam.list_user_policies(UserName=username)
             u["inline_policies"] = policies.get("PolicyNames", [])
@@ -214,7 +205,7 @@ def _scan_iam(session: boto3.Session) -> list[dict]:
     return users
 
 
-# ─────────────────────────── Security Groups ───────────────────────────
+#  Security Groups 
 
 def _scan_security_groups(session: boto3.Session) -> list[dict]:
     ec2 = session.client("ec2")
@@ -241,7 +232,7 @@ def _scan_security_groups(session: boto3.Session) -> list[dict]:
     return results
 
 
-# ─────────────────────────── VPC ───────────────────────────
+#  VPC 
 
 def _scan_vpc(session: boto3.Session) -> list[dict]:
     ec2 = session.client("ec2")
@@ -257,7 +248,6 @@ def _scan_vpc(session: boto3.Session) -> list[dict]:
             "tags": {t["Key"]: t["Value"] for t in vpc.get("Tags", [])},
         }
 
-        # Flow logs
         try:
             fl = ec2.describe_flow_logs(Filters=[{"Name": "resource-id", "Values": [vpc_id]}])
             v["flow_logs_enabled"] = len(fl.get("FlowLogs", [])) > 0
@@ -269,7 +259,7 @@ def _scan_vpc(session: boto3.Session) -> list[dict]:
     return results
 
 
-# ─────────────────────────── RDS ───────────────────────────
+#  RDS 
 
 def _scan_rds(session: boto3.Session) -> list[dict]:
     rds = session.client("rds")

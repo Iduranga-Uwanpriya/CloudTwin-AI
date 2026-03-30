@@ -61,7 +61,7 @@ def verify_blockchain_integrity():
         
         return {
             "status": "valid" if is_valid else "invalid",
-            "message": "✅ Blockchain integrity verified - No tampering detected" if is_valid else f"❌ Tampering detected: {error_msg}",
+            "message": " Blockchain integrity verified - No tampering detected" if is_valid else f"❌ Tampering detected: {error_msg}",
             "chain_valid": is_valid,
             "statistics": stats
         }

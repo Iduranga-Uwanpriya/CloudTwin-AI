@@ -16,7 +16,7 @@ from backend.app.api import deploy, compliance, audit, anomaly, reports, auth, a
 from backend.app.db.models import Base
 from backend.app.db.session import engine
 
-# ==================== CREATE APP ====================
+#  CREATE APP 
 app = FastAPI(
     title=settings.APP_NAME,
     description=settings.APP_DESCRIPTION,
@@ -25,7 +25,7 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# ==================== CORS MIDDLEWARE ====================
+#  CORS MIDDLEWARE 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -34,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ==================== INCLUDE API ROUTERS ====================
+#  INCLUDE API ROUTERS 
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(aws_accounts.router, prefix="/api/v1")
 app.include_router(scanner.router, prefix="/api/v1")
@@ -44,7 +44,7 @@ app.include_router(audit.router, prefix="/api/v1")
 app.include_router(anomaly.router, prefix="/api/v1")
 app.include_router(reports.router, prefix="/api/v1")
 
-# ==================== ROOT ENDPOINTS ====================
+#  ROOT ENDPOINTS 
 
 @app.get("/")
 def root():
@@ -95,16 +95,16 @@ def system_info():
             "reports": "/api/v1/reports"
         },
         "features": {
-            "terraform_parsing": "✅ Working",
-            "localstack_deployment": "✅ Working",
-            "compliance_checking": "✅ Working (ISO 27001 & NIST 800-53)",
-            "ai_anomaly_detection": "✅ Working (Isolation Forest, One-Class SVM, Autoencoder)",
-            "blockchain_audit": "✅ Working (SHA-256 + Merkle Tree)",
-            "report_generation": "✅ Working (HTML with SHA-256 signatures)"
+            "terraform_parsing": " Working",
+            "localstack_deployment": " Working",
+            "compliance_checking": " Working (ISO 27001 & NIST 800-53)",
+            "ai_anomaly_detection": " Working (Isolation Forest, One-Class SVM, Autoencoder)",
+            "blockchain_audit": " Working (SHA-256 + Merkle Tree)",
+            "report_generation": " Working (HTML with SHA-256 signatures)"
         }
     }
 
-# ==================== STARTUP EVENT ====================
+#  STARTUP EVENT 
 
 @app.on_event("startup")
 async def startup_event():
@@ -113,24 +113,24 @@ async def startup_event():
     """
     # Create database tables
     Base.metadata.create_all(bind=engine)
-    print("✅ Database tables ready")
+    print(" Database tables ready")
 
-    print(f"🚀 {settings.APP_NAME} v{settings.APP_VERSION} starting...")
-    print(f"📍 LocalStack endpoint: {settings.LOCALSTACK_ENDPOINT}")
-    print(f"📚 API Documentation: http://localhost:8000/docs")
+    print(f" {settings.APP_NAME} v{settings.APP_VERSION} starting...")
+    print(f" LocalStack endpoint: {settings.LOCALSTACK_ENDPOINT}")
+    print(f" API Documentation: http://localhost:8000/docs")
 
     # Test LocalStack connection
     if test_localstack_connection():
-        print("✅ LocalStack connected")
+        print(" LocalStack connected")
     else:
-        print("⚠️  LocalStack not connected - start LocalStack to enable full functionality")
+        print("  LocalStack not connected - start LocalStack to enable full functionality")
 
-# ==================== SHUTDOWN EVENT ====================
+#  SHUTDOWN EVENT 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """
     Run on application shutdown
     """
-    print(f"👋 {settings.APP_NAME} shutting down...")
+    print(f" {settings.APP_NAME} shutting down...")
     

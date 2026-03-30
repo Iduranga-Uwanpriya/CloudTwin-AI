@@ -18,13 +18,7 @@ router = APIRouter(prefix="/compliance", tags=["Compliance"])
 
 @router.get("/{bucket_name}", response_model=ComplianceResult)
 def check_compliance(bucket_name: str):
-    """
-    Check compliance for a specific S3 bucket
-    
-    - Runs security checks
-    - Calculates compliance score
-    - Provides recommendations
-    """
+    """Check compliance for a specific S3 bucket."""
     try:
         result = check_bucket_compliance(bucket_name)
         blockchain_logger.add_compliance_log(
@@ -41,11 +35,7 @@ def check_compliance(bucket_name: str):
 
 @router.get("/")
 def check_all_buckets():
-    """
-    Check compliance for all buckets in LocalStack
-    
-    Returns compliance results for all resources
-    """
+    """Check compliance for all buckets in LocalStack."""
     try:
         buckets = list_buckets()
         

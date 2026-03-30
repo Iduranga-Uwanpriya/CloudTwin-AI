@@ -187,9 +187,9 @@ class ReportGenerator:
 </body>
 </html>"""
 
-    # ------------------------------------------------------------------
+    
     # Compliance Report
-    # ------------------------------------------------------------------
+    
 
     def generate_compliance_report(
         self,
@@ -308,9 +308,9 @@ class ReportGenerator:
             return [data.dict()]
         return []
 
-    # ------------------------------------------------------------------
+    
     # Anomaly Detection Report
-    # ------------------------------------------------------------------
+    
 
     def generate_anomaly_report(
         self,
@@ -401,10 +401,9 @@ class ReportGenerator:
             return [data.dict()]
         return []
 
-    # ------------------------------------------------------------------
+    
     # Full / Comprehensive Report
-    # ------------------------------------------------------------------
-
+    
     def generate_full_report(
         self,
         compliance_results: Any,
@@ -427,7 +426,7 @@ class ReportGenerator:
 
         body_parts: List[str] = []
 
-        # --- Compliance Section ---
+        #  Compliance Section 
         c_results = self._normalise_compliance(compliance_results)
         body_parts.append("<div class='section'><h2>1. Compliance Assessment</h2>")
         if c_results:
@@ -442,7 +441,7 @@ class ReportGenerator:
             body_parts.append("<p>No compliance data available.</p>")
         body_parts.append("</div>")
 
-        # --- Anomaly Section ---
+        #  Anomaly Section 
         a_results = self._normalise_anomaly(anomaly_results)
         body_parts.append("<div class='section'><h2>2. Anomaly Detection</h2>")
         if a_results:
@@ -451,7 +450,7 @@ class ReportGenerator:
             body_parts.append("<p>No anomaly data available.</p>")
         body_parts.append("</div>")
 
-        # --- Audit Trail Section ---
+        #  Audit Trail Section 
         body_parts.append("<div class='section'><h2>3. Audit Trail Integrity</h2>")
         audit_data = self._normalise_audit(audit_trail)
         if audit_data:
@@ -468,7 +467,7 @@ class ReportGenerator:
             body_parts.append("<p>No audit trail data available.</p>")
         body_parts.append("</div>")
 
-        # --- Recommendations ---
+        #  Recommendations 
         all_recs: List[str] = []
         for r in c_results:
             all_recs.extend(r.get("recommendations", []))

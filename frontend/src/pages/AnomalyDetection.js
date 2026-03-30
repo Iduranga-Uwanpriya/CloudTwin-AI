@@ -6,6 +6,15 @@ import { anomaly, awsAccounts, scanner } from "../services/api";
 import "./AnomalyDetection.css";
 
 const RISK_COLOR = { critical: "#f85149", high: "#d29922", medium: "#58a6ff", low: "#3fb950" };
+function formatApiError(err, fallback = "Request failed") {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const messages = detail.map((item) => item?.msg).filter(Boolean);
+    if (messages.length > 0) return messages.join(", ");
+  }
+  return fallback;
+}
 
 export default function AnomalyDetection() {
   const [file, setFile] = useState(null);
@@ -46,7 +55,7 @@ export default function AnomalyDetection() {
       const { data } = await anomaly.detect(file);
       setResult(data);
     } catch (e) {
-      setError(e.response?.data?.detail || "Detection failed");
+      setError(formatApiError(e, "Detection failed"));
     } finally {
       setLoading(false);
     }
@@ -60,7 +69,7 @@ export default function AnomalyDetection() {
       const { data } = await scanner.cloudtrailThreats(selectedAccount.id);
       setCtResults(data);
     } catch (e) {
-      setCtError(e.response?.data?.detail || "CloudTrail analysis failed");
+      setCtError(formatApiError(e, "CloudTrail analysis failed"));
     } finally {
       setCtLoading(false);
     }
@@ -315,7 +324,7 @@ export default function AnomalyDetection() {
                   const { data } = await scanner.vpcFlowLogAnalysis(selectedAccount.id, vpcHours);
                   setVpcResults(data);
                 } catch (e) {
-                  setVpcError(e.response?.data?.detail || "VPC Flow Log analysis failed");
+                  setVpcError(formatApiError(e, "VPC Flow Log analysis failed"));
                 } finally {
                   setVpcLoading(false);
                 }

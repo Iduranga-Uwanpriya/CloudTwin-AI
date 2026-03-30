@@ -6,12 +6,7 @@ import boto3
 from backend.app.config import settings
 
 def get_s3_client():
-    """
-    Create S3 client configured for LocalStack
-    
-    Returns:
-        boto3.client: Configured S3 client
-    """
+    """Create S3 client configured for LocalStack."""
     return boto3.client(
         's3',
         endpoint_url=settings.LOCALSTACK_ENDPOINT,
@@ -21,15 +16,7 @@ def get_s3_client():
     )
 
 def deploy_bucket(bucket_name: str) -> bool:
-    """
-    Deploy S3 bucket to LocalStack digital twin
-    
-    Args:
-        bucket_name: Name of bucket to create
-        
-    Returns:
-        bool: True if successful
-    """
+    """Deploy S3 bucket to LocalStack digital twin."""
     try:
         s3_client = get_s3_client()
         create_args = {"Bucket": bucket_name}
@@ -44,12 +31,7 @@ def deploy_bucket(bucket_name: str) -> bool:
         return False
 
 def list_buckets() -> list:
-    """
-    List all buckets in LocalStack
-    
-    Returns:
-        list: Bucket names
-    """
+    """List all buckets in LocalStack."""
     try:
         s3_client = get_s3_client()
         response = s3_client.list_buckets()
@@ -59,12 +41,7 @@ def list_buckets() -> list:
         return []
 
 def test_localstack_connection() -> bool:
-    """
-    Test LocalStack connectivity
-    
-    Returns:
-        bool: True if connected
-    """
+    """Test LocalStack connectivity."""
     try:
         s3_client = get_s3_client()
         s3_client.list_buckets()

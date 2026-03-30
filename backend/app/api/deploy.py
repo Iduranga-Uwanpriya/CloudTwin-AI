@@ -82,7 +82,6 @@ async def destroy_infrastructure():
 
         for name in buckets:
             try:
-                # Empty bucket first
                 objs = s3.list_objects_v2(Bucket=name).get("Contents", [])
                 for obj in objs:
                     s3.delete_object(Bucket=name, Key=obj["Key"])
@@ -148,7 +147,6 @@ async def deploy_terraform(file: UploadFile = File(...)):
             if deploy_bucket(bucket_name):
                 deployed.append(bucket_name)
 
-        # Run compliance scan on deployed buckets
         results = []
         for name in deployed:
             result = compliance_engine.scan_resource("s3_bucket", name, {"name": name})

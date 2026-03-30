@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import { deploy, compliance, reports, awsAccounts, scanner } from "../services/api";
 import "./Deploy.css";
 
+function formatApiError(err, fallback = "Request failed") {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const messages = detail.map((item) => item?.msg).filter(Boolean);
+    if (messages.length > 0) return messages.join(", ");
+  }
+  return fallback;
+}
+
 export default function Deploy() {
   const [status, setStatus] = useState(null);
   const [accounts, setAccounts] = useState([]);
@@ -53,7 +63,7 @@ export default function Deploy() {
       // Auto-scan after clone
       await handleScanAll();
     } catch (e) {
-      setError(e.response?.data?.detail || "Clone to twin failed");
+      setError(formatApiError(e, "Clone to twin failed"));
     } finally {
       setCloning((s) => ({ ...s, [accountId]: false }));
     }
@@ -82,7 +92,7 @@ export default function Deploy() {
       setMsg(data.message || "Destroyed");
       await loadStatus();
     } catch (e) {
-      setError(e.response?.data?.detail || "Destroy failed");
+      setError(formatApiError(e, "Destroy failed"));
     } finally {
       setLoading(false);
     }
@@ -116,7 +126,7 @@ export default function Deploy() {
       setMsg("Terraform scanned successfully");
       await loadStatus();
     } catch (e) {
-      setError(e.response?.data?.detail || "Terraform upload failed");
+      setError(formatApiError(e, "Terraform upload failed"));
     } finally {
       setTfUploading(false);
     }

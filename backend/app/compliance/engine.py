@@ -31,18 +31,16 @@ class ComplianceEngine:
     def __init__(self):
         self.rules = COMPLIANCE_RULES
 
-    # ------------------------------------------------------------------ #
+    
     #  S3 Bucket Checks
-    # ------------------------------------------------------------------ #
+     
 
     def _check_s3_encryption_at_rest(self, config: Dict) -> bool:
-        """Check if S3 bucket has encryption at rest enabled"""
-        # Check Terraform config for server_side_encryption_configuration
+        """Check if S3 bucket has encryption at rest enabled."""
         if "server_side_encryption_configuration" in str(config):
             return True
         if config.get("server_side_encryption_configuration"):
             return True
-        # Check for encryption keyword indicators
         encryption = config.get("encryption", config.get("sse_algorithm"))
         if encryption:
             return True
@@ -69,8 +67,7 @@ class ComplianceEngine:
         return "versioning" in str(config) and "enabled" in str(config).lower()
 
     def _check_s3_public_access_block(self, config: Dict) -> bool:
-        """Check if all public access is blocked"""
-        # Look for aws_s3_bucket_public_access_block resource
+        """Check if all public access is blocked."""
         pab = config.get("public_access_block", config.get("block_public_access", {}))
         if isinstance(pab, dict):
             return all([
@@ -79,7 +76,6 @@ class ComplianceEngine:
                 pab.get("block_public_policy", False),
                 pab.get("restrict_public_buckets", False)
             ])
-        # Check for presence in Terraform config string
         cfg_str = str(config).lower()
         return "block_public_acls" in cfg_str and "restrict_public_buckets" in cfg_str
 
@@ -105,30 +101,28 @@ class ComplianceEngine:
         return "lifecycle_rule" in str(config).lower()
 
     def _check_s3_bucket_policy_restrictions(self, config: Dict) -> bool:
-        """Check bucket policy doesn't have wildcard principals"""
+        """Check bucket policy doesn't have wildcard principals."""
         policy = config.get("policy", config.get("bucket_policy", ""))
         policy_str = str(policy)
-        # Fail if wildcard principal found
         if '"Principal": "*"' in policy_str or "'Principal': '*'" in policy_str:
             return False
         if '"Principal":"*"' in policy_str:
             return False
-        # Pass if no policy (no overly permissive access)
         return True
 
-    # ------------------------------------------------------------------ #
+    
     #  EC2 Checks
-    # ------------------------------------------------------------------ #
+    
 
     def _check_ec2_security_group_ingress(self, config: Dict) -> bool:
-        """Check security groups don't allow unrestricted ingress"""
+        """Check security groups don't allow unrestricted ingress on sensitive ports."""
         ingress = config.get("ingress", [])
         for rule in ingress:
             if isinstance(rule, dict):
                 cidr = rule.get("cidr_blocks", [])
                 if "0.0.0.0/0" in cidr:
                     port = rule.get("from_port", 0)
-                    # Sensitive ports: SSH(22), RDP(3389), DB(3306,5432)
+                    # SSH(22), RDP(3389), DB(3306,5432)
                     if port in [22, 3389, 3306, 5432, 0]:
                         return False
         cfg_str = str(config)
@@ -137,14 +131,14 @@ class ComplianceEngine:
         return True
 
     def _check_ec2_imdsv2(self, config: Dict) -> bool:
-        """Check if IMDSv2 is required"""
+        """Check if IMDSv2 is required."""
         metadata = config.get("metadata_options", {})
         if isinstance(metadata, dict):
             return metadata.get("http_tokens") == "required"
         return "http_tokens" in str(config) and "required" in str(config)
 
     def _check_ec2_ebs_encryption(self, config: Dict) -> bool:
-        """Check if EBS volumes are encrypted"""
+        """Check if EBS volumes are encrypted."""
         ebs = config.get("ebs_block_device", config.get("root_block_device", []))
         if isinstance(ebs, list):
             for vol in ebs:
@@ -152,16 +146,16 @@ class ComplianceEngine:
                     return False
         return config.get("ebs_optimized", False) or "encrypted" in str(config).lower()
 
-    # ------------------------------------------------------------------ #
+    
     #  IAM Checks
-    # ------------------------------------------------------------------ #
+    
 
     def _check_iam_mfa(self, config: Dict) -> bool:
-        """Check if MFA is enabled for IAM user"""
+        """Check if MFA is enabled for IAM user."""
         return config.get("mfa_enabled", False) or "mfa" in str(config).lower()
 
     def _check_iam_no_wildcard(self, config: Dict) -> bool:
-        """Check IAM policy doesn't use wildcard permissions"""
+        """Check IAM policy doesn't use wildcard permissions."""
         policy = config.get("policy", config.get("policy_document", ""))
         policy_str = str(policy)
         if '"Action": "*"' in policy_str or '"Resource": "*"' in policy_str:
@@ -170,13 +164,13 @@ class ComplianceEngine:
         return True
 
     def _check_iam_password_policy(self, config: Dict) -> bool:
-        """Check IAM password policy meets requirements"""
+        """Check IAM password policy meets minimum length of 14 characters."""
         min_length = config.get("minimum_password_length", 0)
         return min_length >= 14
 
-    # ------------------------------------------------------------------ #
+    
     #  Check Dispatcher
-    # ------------------------------------------------------------------ #
+    
 
     CHECK_FUNCTIONS = {
         "encryption_at_rest": "_check_s3_encryption_at_rest",
@@ -196,7 +190,6 @@ class ComplianceEngine:
     }
 
     def _run_check(self, rule: ComplianceRule, resource_config: Dict) -> ComplianceCheck:
-        """Run a single compliance check against a resource configuration"""
         check_fn_name = self.CHECK_FUNCTIONS.get(rule.check_key)
         if not check_fn_name:
             return ComplianceCheck(
@@ -247,9 +240,9 @@ class ComplianceEngine:
                 remediation=f"[{rule.rule_id}] {rule.remediation}"
             )
 
-    # ------------------------------------------------------------------ #
+    
     #  Public API
-    # ------------------------------------------------------------------ #
+    
 
     def scan_resource(
         self,
@@ -257,17 +250,7 @@ class ComplianceEngine:
         resource_name: str,
         resource_config: Dict
     ) -> ComplianceResult:
-        """
-        Scan a single resource against all applicable compliance rules.
-
-        Args:
-            resource_type: Type of resource (s3_bucket, ec2_instance, iam_user, iam_policy)
-            resource_name: Name/identifier of the resource
-            resource_config: Configuration dictionary of the resource
-
-        Returns:
-            ComplianceResult with weighted compliance score
-        """
+        """Scan a single resource against all applicable compliance rules."""
         applicable_rules = get_rules_by_resource_type(resource_type)
         checks: Dict[str, ComplianceCheck] = {}
 
@@ -275,7 +258,6 @@ class ComplianceEngine:
             check_result = self._run_check(rule, resource_config)
             checks[rule.check_key] = check_result
 
-        # Calculate weighted compliance score
         total_weight = 0.0
         passed_weight = 0.0
         for rule in applicable_rules:
@@ -288,7 +270,6 @@ class ComplianceEngine:
 
         compliance_score = (passed_weight / total_weight * 100) if total_weight > 0 else 0.0
 
-        # Generate recommendations
         recommendations = []
         for rule in applicable_rules:
             check = checks.get(rule.check_key)
@@ -308,15 +289,7 @@ class ComplianceEngine:
         )
 
     def scan_terraform(self, parsed_tf: Dict) -> List[ComplianceResult]:
-        """
-        Scan all resources in a parsed Terraform configuration.
-
-        Args:
-            parsed_tf: Parsed Terraform HCL2 configuration
-
-        Returns:
-            List of ComplianceResult for each resource found
-        """
+        """Scan all resources in a parsed Terraform configuration."""
         results = []
         resources = parsed_tf.get("resource", [])
 
@@ -333,7 +306,7 @@ class ComplianceEngine:
         return results
 
     def _map_tf_resource_type(self, tf_type: str) -> Optional[str]:
-        """Map Terraform resource type to our internal type"""
+        """Map Terraform resource type to internal type."""
         mapping = {
             "aws_s3_bucket": "s3_bucket",
             "aws_instance": "ec2_instance",
@@ -345,7 +318,7 @@ class ComplianceEngine:
         return mapping.get(tf_type)
 
     def get_framework_summary(self, results: List[ComplianceResult]) -> Dict:
-        """Generate a summary of compliance by framework"""
+        """Generate a compliance summary grouped by framework (ISO 27001 / NIST 800-53)."""
         iso_checks = {"pass": 0, "fail": 0, "total": 0}
         nist_checks = {"pass": 0, "fail": 0, "total": 0}
 
@@ -353,7 +326,6 @@ class ComplianceEngine:
             for check_key, check in result.checks.items():
                 if check.status in ("SKIP", "ERROR"):
                     continue
-                # Find corresponding rule
                 rule = next((r for r in COMPLIANCE_RULES if r.check_key == check_key), None)
                 if rule:
                     if rule.iso_control:

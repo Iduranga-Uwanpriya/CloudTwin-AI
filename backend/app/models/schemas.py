@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, List, Optional
 from datetime import datetime
 
-# ==================== COMPLIANCE MODELS ====================
+#  COMPLIANCE MODELS 
 
 class ComplianceCheck(BaseModel):
     """Single compliance check result"""
@@ -28,7 +28,7 @@ class ComplianceResult(BaseModel):
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
     recommendations: List[str] = Field(default_factory=list)
 
-# ==================== DEPLOYMENT MODELS ====================
+#  DEPLOYMENT MODELS 
 
 class DeployResult(BaseModel):
     """Infrastructure deployment result"""
@@ -37,7 +37,7 @@ class DeployResult(BaseModel):
     message: str
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
 
-# ==================== BLOCKCHAIN MODELS ====================
+# BLOCKCHAIN MODELS 
 
 class BlockchainBlock(BaseModel):
     """Single block in audit blockchain"""
@@ -58,7 +58,7 @@ class AuditTrailResponse(BaseModel):
     blocks: List[BlockchainBlock]
     message: Optional[str] = None
 
-# ==================== ANOMALY DETECTION MODELS ====================
+#  ANOMALY DETECTION MODELS 
 
 class AnomalyDetectionResult(BaseModel):
     """Result from AI-powered anomaly detection"""
@@ -75,7 +75,7 @@ class AnomalyDetectionResult(BaseModel):
         None, description="Suggested remediation action"
     )
 
-# ==================== REPORT MODELS ====================
+#  REPORT MODELS 
 
 class ReportMetadata(BaseModel):
     """Metadata for a generated report"""
@@ -93,7 +93,7 @@ class ReportMetadata(BaseModel):
         default=0, description="Number of resources covered in the report"
     )
 
-# ==================== HEALTH CHECK ====================
+#  HEALTH CHECK 
 
 class HealthCheck(BaseModel):
     """System health status"""

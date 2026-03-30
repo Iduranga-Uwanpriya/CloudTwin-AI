@@ -4,14 +4,14 @@ const BASE = "/api/v1";
 
 const api = axios.create({ baseURL: BASE });
 
-// ── Auth interceptor: attach JWT to every request ──────────
+//  Auth interceptor: attach JWT to every request 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// ── Auth ────────────────────────────────────────────────────
+//  Auth 
 export const auth = {
   signup: (data) => api.post("/auth/signup", data),
   login: (email, password) => {
@@ -25,7 +25,7 @@ export const auth = {
   me: () => api.get("/auth/me"),
 };
 
-// ── AWS Accounts ────────────────────────────────────────────
+//  AWS Accounts 
 export const awsAccounts = {
   connect: (data) => api.post("/aws-accounts/connect", data),
   list: () => api.get("/aws-accounts/"),
@@ -33,7 +33,7 @@ export const awsAccounts = {
   cfnTemplate: () => api.get("/aws-accounts/cloudformation-template"),
 };
 
-// ── Live Scanner ────────────────────────────────────────────
+//  Live Scanner 
 export const scanner = {
   scan: (accountId) => api.post(`/scanner/${accountId}/scan`),
   history: (accountId) => api.get(`/scanner/${accountId}/history`),
@@ -44,7 +44,7 @@ export const scanner = {
   vpcFlowLogAnalysis: (accountId, hours = 1) => api.post(`/scanner/${accountId}/vpc-flowlog-analysis?hours=${hours}`),
 };
 
-// ── Compliance (Terraform / LocalStack) ─────────────────────
+//  Compliance (Terraform / LocalStack) 
 export const compliance = {
   scan: (bucket) => api.get(`/compliance/${bucket}`),
   scanAll: () => api.get("/compliance/"),
@@ -55,7 +55,7 @@ export const compliance = {
   },
 };
 
-// ── Anomaly Detection ───────────────────────────────────────
+//  Anomaly Detection 
 export const anomaly = {
   detect: (file) => {
     const fd = new FormData();
@@ -66,24 +66,24 @@ export const anomaly = {
   evaluation: () => api.get("/anomaly/evaluation"),
 };
 
-// ── Audit Trail ─────────────────────────────────────────────
+//  Audit Trail 
 export const audit = {
   trail: () => api.get("/audit/blockchain"),
   stats: () => api.get("/audit/stats"),
 };
 
-// ── Deploy (Digital Twin) ───────────────────────────────────
+//  Deploy (Digital Twin) 
 export const deploy = {
   infrastructure: (config) => api.post("/deploy/infrastructure", config),
   destroy: () => api.post("/deploy/destroy"),
   status: () => api.get("/deploy/status"),
 };
 
-// ── Reports ─────────────────────────────────────────────────
+//  Reports 
 export const reports = {
   compliance: (bucket) => `/api/v1/reports/compliance/${bucket}`,
   full: () => `/api/v1/reports/full`,
 };
 
-// ── Health ──────────────────────────────────────────────────
+//  Health 
 export const health = () => axios.get("/health");

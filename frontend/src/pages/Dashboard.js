@@ -31,6 +31,7 @@ export default function Dashboard() {
   const lastScanned = activeAccounts
     .filter((a) => a.last_scanned_at)
     .sort((a, b) => new Date(b.last_scanned_at) - new Date(a.last_scanned_at))[0];
+  const hasLastScanScore = typeof lastScanned?.compliance_score === "number";
 
   return (
     <div className="page">
@@ -51,12 +52,12 @@ export default function Dashboard() {
             />
             <StatsCard
               title="Last Scan Score"
-              value={lastScanned?.last_scanned_at ? `${lastScanned.compliance_score ?? "--"}%` : "--"}
+              value={lastScanned?.last_scanned_at && hasLastScanScore ? `${Math.round(lastScanned.compliance_score)}%` : "--"}
               sub={lastScanned ? `${lastScanned.account_alias} - ${new Date(lastScanned.last_scanned_at).toLocaleDateString()}` : "No scans yet"}
               color={
                 lastScanned?.compliance_score >= 80 ? "#3fb950"
                 : lastScanned?.compliance_score >= 50 ? "#d29922"
-                : lastScanned?.compliance_score ? "#f85149"
+                : hasLastScanScore ? "#f85149"
                 : "#8b949e"
               }
               icon="✔"

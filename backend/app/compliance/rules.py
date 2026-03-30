@@ -22,7 +22,7 @@ class ComplianceRule:
     tags: List[str] = field(default_factory=list)
 
 
-# ==================== S3 BUCKET RULES ====================
+#  S3 BUCKET RULES 
 
 S3_RULES = [
     ComplianceRule(
@@ -131,7 +131,7 @@ S3_RULES = [
     ),
 ]
 
-# ==================== EC2 INSTANCE RULES ====================
+#  EC2 INSTANCE RULES 
 
 EC2_RULES = [
     ComplianceRule(
@@ -175,7 +175,7 @@ EC2_RULES = [
     ),
 ]
 
-# ==================== IAM RULES ====================
+#  IAM RULES 
 
 IAM_RULES = [
     ComplianceRule(
@@ -219,7 +219,7 @@ IAM_RULES = [
     ),
 ]
 
-# ==================== ALL RULES ====================
+#  ALL RULES 
 
 COMPLIANCE_RULES: List[ComplianceRule] = S3_RULES + EC2_RULES + IAM_RULES
 

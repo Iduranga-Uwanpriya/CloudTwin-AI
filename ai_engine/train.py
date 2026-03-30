@@ -42,9 +42,9 @@ SAVED_MODELS_DIR = SCRIPT_DIR / "saved_models"
 PLOTS_DIR = SCRIPT_DIR / "plots"
 
 
-# ======================================================================
+
 # Data Loading
-# ======================================================================
+
 
 def generate_synthetic_dataset(n_normal=10000, n_attack=3000):
     """Generate synthetic UNSW-NB15-style data for testing."""
@@ -167,9 +167,9 @@ def load_data(csv_path=None):
     return generate_synthetic_dataset()
 
 
-# ======================================================================
+
 # Preprocessing
-# ======================================================================
+
 
 def preprocess(df):
     from sklearn.preprocessing import StandardScaler
@@ -210,9 +210,9 @@ def preprocess(df):
     return X, y, feature_names, scaler, attack_cats
 
 
-# ======================================================================
+
 # Data Splitting
-# ======================================================================
+
 
 def split_data(X, y, train_ratio=0.7):
     np.random.seed(42)
@@ -232,9 +232,9 @@ def split_data(X, y, train_ratio=0.7):
     return X[train_idx], y[train_idx], X[test_idx], y[test_idx]
 
 
-# ======================================================================
+
 # Training
-# ======================================================================
+
 
 def train_isolation_forest(X_train, contamination=0.05):
     from sklearn.ensemble import IsolationForest
@@ -304,9 +304,9 @@ def train_autoencoder(X_train, encoding_dim=8, epochs=50, batch_size=64):
     return autoencoder, threshold, history
 
 
-# ======================================================================
+
 # Evaluation
-# ======================================================================
+
 
 def evaluate(models, X_test, y_test):
     from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, classification_report
@@ -347,9 +347,9 @@ def evaluate(models, X_test, y_test):
     return results
 
 
-# ======================================================================
+
 # Save
-# ======================================================================
+
 
 def save_models(models, scaler, feature_names, save_dir):
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -389,9 +389,9 @@ def save_evaluation_report(results, dataset_info, save_dir):
         json.dump(report, f, indent=2)
 
 
-# ======================================================================
+
 # Main
-# ======================================================================
+
 
 def main():
     parser = argparse.ArgumentParser(description="CloudTwin AI - Train ML Models")

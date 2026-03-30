@@ -22,7 +22,7 @@ def _uuid():
     return str(uuid.uuid4())
 
 
-# ─────────────────────────── Users ───────────────────────────
+#  Users 
 
 class User(Base):
     __tablename__ = "users"
@@ -40,7 +40,7 @@ class User(Base):
     scan_results = relationship("ScanResult", back_populates="user", cascade="all, delete-orphan")
 
 
-# ─────────────────────────── AWS Accounts ───────────────────────────
+#  AWS Accounts 
 
 class AwsAccount(Base):
     __tablename__ = "aws_accounts"
@@ -60,7 +60,7 @@ class AwsAccount(Base):
     scans = relationship("ScanResult", back_populates="aws_account", cascade="all, delete-orphan")
 
 
-# ─────────────────────────── Scan Results ───────────────────────────
+#  Scan Results 
 
 class ScanResult(Base):
     __tablename__ = "scan_results"
@@ -83,7 +83,7 @@ class ScanResult(Base):
     findings = relationship("ComplianceFinding", back_populates="scan", cascade="all, delete-orphan")
 
 
-# ─────────────────────────── Compliance Findings ───────────────────────────
+#  Compliance Findings 
 
 class ComplianceFinding(Base):
     __tablename__ = "compliance_findings"

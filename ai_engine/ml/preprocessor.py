@@ -13,9 +13,9 @@ from typing import List, Dict, Tuple, Optional, Union
 
 import numpy as np
 
-# ---------------------------------------------------------------------------
+
 # Constants
-# ---------------------------------------------------------------------------
+
 FEATURE_NAMES = [
     "api_call_frequency",
     "unique_ip_count",
@@ -34,9 +34,8 @@ _SPLIT_VAL = 0.15
 # test = 1 - train - val = 0.15
 
 
-# ---------------------------------------------------------------------------
 # Utility helpers
-# ---------------------------------------------------------------------------
+
 
 def _safe_float(value, default: float = 0.0) -> float:
     """Convert value to float safely."""
@@ -66,9 +65,9 @@ def _hash_to_numeric(value: str) -> float:
     return int(h[:8], 16) / 0xFFFFFFFF
 
 
-# ---------------------------------------------------------------------------
+
 # Feature engineering from raw log dicts
-# ---------------------------------------------------------------------------
+
 
 def _engineer_features_single(log: dict) -> np.ndarray:
     """Extract the feature vector from a single log entry (dict)."""
@@ -129,9 +128,9 @@ def _engineer_features_batch(logs: List[dict]) -> np.ndarray:
     return np.vstack([_engineer_features_single(log) for log in logs])
 
 
-# ---------------------------------------------------------------------------
+
 # Normalisation helpers
-# ---------------------------------------------------------------------------
+
 
 def _log_transform(X: np.ndarray) -> np.ndarray:
     """Apply log1p transformation to stabilise skewed distributions."""
@@ -150,9 +149,9 @@ def _zscore_normalize(X: np.ndarray, mean: Optional[np.ndarray] = None,
     return X_norm, mean, std
 
 
-# ---------------------------------------------------------------------------
+
 # Public API
-# ---------------------------------------------------------------------------
+
 
 class CloudLogPreprocessor:
     """Stateful preprocessor that remembers normalisation statistics."""
@@ -191,9 +190,9 @@ def preprocess_logs(logs: List[dict]) -> Tuple[np.ndarray, List[str]]:
     return preprocessor.fit_transform(logs)
 
 
-# ---------------------------------------------------------------------------
+
 # CSV loading
-# ---------------------------------------------------------------------------
+
 
 def load_csv(filepath: Union[str, Path]) -> List[dict]:
     """Load a CSV file and return a list of dicts."""
@@ -216,9 +215,9 @@ def load_dataset(data_dir: Union[str, Path] = None) -> List[dict]:
     return all_logs
 
 
-# ---------------------------------------------------------------------------
+
 # Train / Val / Test split
-# ---------------------------------------------------------------------------
+
 
 def split_data(X: np.ndarray, y: Optional[np.ndarray] = None,
                train: float = _SPLIT_TRAIN, val: float = _SPLIT_VAL,

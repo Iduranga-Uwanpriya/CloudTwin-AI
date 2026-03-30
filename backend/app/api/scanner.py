@@ -17,7 +17,7 @@ from backend.app.compliance.engine import compliance_engine
 router = APIRouter(prefix="/scanner", tags=["Live Scanner"])
 
 
-# ── Schemas ──────────────────────────────────────────────────
+# Schemas 
 
 class ScanResponse(BaseModel):
     scan_id: str
@@ -40,7 +40,7 @@ class ScanHistoryItem(BaseModel):
     created_at: str
 
 
-# ── Endpoints ────────────────────────────────────────────────
+#  Endpoints 
 
 @router.post("/{account_id}/scan", response_model=ScanResponse)
 def trigger_scan(
@@ -61,7 +61,6 @@ def trigger_scan(
     if not account:
         raise HTTPException(status_code=404, detail="AWS account not found")
 
-    # 1. Scan live AWS resources
     try:
         inventory = scan_aws_account(account)
     except Exception as e:
@@ -70,7 +69,6 @@ def trigger_scan(
             detail=f"Failed to connect to AWS account. Check your IAM role and ExternalId. Error: {str(e)}",
         )
 
-    # 2. Run compliance checks on discovered resources
     all_findings = []
 
     # S3 checks
@@ -179,16 +177,14 @@ def trigger_scan(
             "details": {"flow_logs_enabled": vpc.get("flow_logs_enabled")},
         })
 
-    # 3. Calculate scores
     total = len(all_findings)
     passed = sum(1 for f in all_findings if f["status"] == "PASS")
     failed = total - passed
     score = round((passed / total) * 100, 2) if total > 0 else 100.0
 
-    # Count only resources that actually have compliance checks (exclude IAM etc.)
+    # IAM users are scanned for inventory but excluded from compliance findings
     actual_resources = len(set((f["resource_type"], f["resource_id"]) for f in all_findings))
 
-    # 4. Persist to DB
     scan = ScanResult(
         user_id=current_user.id,
         aws_account_id=account_id,
@@ -222,7 +218,6 @@ def trigger_scan(
     db.commit()
     db.refresh(scan)
 
-    # 5. Summary by severity
     severity_summary = {}
     for f in all_findings:
         sev = f["severity"]
@@ -272,7 +267,6 @@ def scan_history(
 
     results = []
     for s in scans:
-        # Get distinct resources for this scan
         resources = (
             db.query(ComplianceFinding.resource_type, ComplianceFinding.resource_id)
             .filter(ComplianceFinding.scan_id == s.id)
@@ -425,16 +419,13 @@ def clone_to_digital_twin(
     if not account:
         raise HTTPException(status_code=404, detail="AWS account not found")
 
-    # 1. Scan real AWS
     try:
         inventory = scan_aws_account(account)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"Failed to scan AWS account: {str(e)}")
 
-    # 2. Generate Terraform
     tf_content = generate_terraform(inventory)
 
-    # 3. Deploy S3 buckets to LocalStack
     from backend.app.services.digital_twin import get_s3_client
     from backend.app.config import settings
     s3 = get_s3_client()
@@ -451,7 +442,6 @@ def clone_to_digital_twin(
             if "BucketAlreadyOwnedByYou" not in str(e):
                 continue
 
-        # Replicate config
         if bucket.get("encryption"):
             try:
                 s3.put_bucket_encryption(
@@ -478,7 +468,6 @@ def clone_to_digital_twin(
 
         cloned_buckets.append(name)
 
-    # 4. Run compliance scan on cloned buckets
     scan_results = []
     for name in cloned_buckets:
         result = compliance_engine.scan_resource("s3_bucket", name, {"name": name})
@@ -510,7 +499,7 @@ def _find_rule(check_key: str) -> dict:
     return {"rule_id": check_key, "title": check_key, "severity": "medium"}
 
 
-# ── CloudTrail Threat Analysis ────────────────────────────────
+# CloudTrail Threat Analysis 
 
 @router.post("/{account_id}/cloudtrail-threats")
 def analyze_cloudtrail_threats(
@@ -550,7 +539,7 @@ def analyze_cloudtrail_threats(
     return results
 
 
-# ── VPC Flow Log + ML Analysis ────────────────────────────────
+# VPC Flow Log + ML Analysis 
 
 @router.post("/{account_id}/vpc-flowlog-analysis")
 def analyze_vpc_flow_logs(

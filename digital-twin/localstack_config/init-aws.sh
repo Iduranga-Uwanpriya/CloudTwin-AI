@@ -1,23 +1,23 @@
 #!/bin/bash
-# ============================================================
+
 # CloudTwin AI - LocalStack Initialization Script
 # Creates sample AWS resources (compliant and non-compliant)
 # for the digital twin environment.
 # This script runs automatically on LocalStack startup.
-# ============================================================
+
 
 set -e
 
 ENDPOINT="http://localhost:4566"
 REGION="us-east-1"
 
-echo "======================================"
-echo " CloudTwin AI - LocalStack Init"
-echo "======================================"
 
-# ----------------------------------------------------------
+echo " CloudTwin AI - LocalStack Init"
+
+
+
 # 1. S3 Buckets
-# ----------------------------------------------------------
+
 
 echo "[*] Creating S3 buckets..."
 
@@ -86,9 +86,9 @@ awslocal s3api put-public-access-block \
 
 echo "  [+] secure-audit-logs created (COMPLIANT)"
 
-# ----------------------------------------------------------
+
 # 2. Bucket Policies
-# ----------------------------------------------------------
+
 
 echo "[*] Setting bucket policies..."
 
@@ -113,9 +113,9 @@ awslocal s3api put-bucket-policy \
 
 echo "  [+] Deny-unencrypted-transport policy applied to secure-data-bucket"
 
-# ----------------------------------------------------------
+
 # 3. CloudTrail Configuration
-# ----------------------------------------------------------
+
 
 echo "[*] Creating CloudTrail trail..."
 
@@ -135,9 +135,9 @@ awslocal cloudtrail start-logging \
 
 echo "  [+] CloudTrail trail created and logging started"
 
-# ----------------------------------------------------------
+
 # 4. VPC and Security Groups
-# ----------------------------------------------------------
+
 
 echo "[*] Creating VPC and security groups..."
 
@@ -187,9 +187,9 @@ awslocal ec2 authorize-security-group-ingress \
 
 echo "  [+] Non-compliant security group created: $SG_NONCOMPLIANT"
 
-# ----------------------------------------------------------
+
 # Done
-# ----------------------------------------------------------
+
 
 echo ""
 echo "======================================"

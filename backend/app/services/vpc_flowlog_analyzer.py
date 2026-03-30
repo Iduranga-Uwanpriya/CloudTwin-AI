@@ -16,7 +16,7 @@ import numpy as np
 
 # VPC Flow Log → UNSW-NB15 feature mapping
 # VPC Flow Log fields: version, account-id, interface-id, srcaddr, dstaddr,
-#                      srcport, dstport, protocol, packets, bytes, start, end, action, log-status
+# srcport, dstport, protocol, packets, bytes, start, end, action, log-status
 # Protocol numbers: 6=TCP, 17=UDP, 1=ICMP
 
 WELL_KNOWN_PORTS = {
@@ -26,20 +26,10 @@ WELL_KNOWN_PORTS = {
 
 
 def pull_vpc_flow_logs(session: boto3.Session, hours: int = 1) -> dict:
-    """
-    Pull VPC Flow Logs from CloudWatch Logs and analyze with ML models.
-
-    Args:
-        session: boto3 Session with cross-account credentials
-        hours: Hours of logs to pull (default 1)
-
-    Returns:
-        Dict with raw logs, mapped features, and ML predictions
-    """
+    """Pull VPC Flow Logs from CloudWatch Logs and analyze with ML models."""
     ec2 = session.client("ec2")
     logs_client = session.client("logs")
 
-    # 1. Find VPCs with flow logs
     vpcs = ec2.describe_vpcs().get("Vpcs", [])
     flow_logs = ec2.describe_flow_logs().get("FlowLogs", [])
 
@@ -60,7 +50,6 @@ def pull_vpc_flow_logs(session: boto3.Session, hours: int = 1) -> dict:
             "predictions": None,
         }
 
-    # 2. Find the CloudWatch log group
     cw_flow_logs = [fl for fl in flow_logs if fl.get("LogDestinationType") == "cloud-watch-logs"]
     if not cw_flow_logs:
         return {
@@ -84,13 +73,11 @@ def pull_vpc_flow_logs(session: boto3.Session, hours: int = 1) -> dict:
             "predictions": None,
         }
 
-    # 3. Pull recent log events
     start_ms = int((datetime.now(timezone.utc) - timedelta(hours=hours)).timestamp() * 1000)
     end_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
 
     raw_events = []
     try:
-        # Get log streams
         streams_resp = logs_client.describe_log_streams(
             logGroupName=log_group,
             orderBy="LastEventTime",
@@ -130,7 +117,6 @@ def pull_vpc_flow_logs(session: boto3.Session, hours: int = 1) -> dict:
             "predictions": None,
         }
 
-    # 4. Parse flow log entries
     parsed = []
     for line in raw_events:
         parts = line.strip().split()
@@ -164,13 +150,9 @@ def pull_vpc_flow_logs(session: boto3.Session, hours: int = 1) -> dict:
             "predictions": None,
         }
 
-    # 5. Map to UNSW-NB15 features
     df = _map_to_model_features(parsed)
-
-    # 6. Run through ML models
     predictions = _run_ml_predictions(df)
 
-    # 7. Combine with source info for display
     for i, pred in enumerate(predictions.get("anomalous_entries", [])):
         if i < len(parsed):
             idx = pred.get("original_index", i)
@@ -270,23 +252,20 @@ def _run_ml_predictions(df: pd.DataFrame) -> dict:
 
         engine.load_models()
 
-        # Scale features using the trained scaler
         feature_names = engine.feature_names
-        # Ensure column order matches training
+        # Column order must match training data
         df_aligned = df.reindex(columns=feature_names, fill_value=0.0)
         X_scaled = engine.scaler.transform(df_aligned.values)
 
-        # Run each model
         if_preds = engine.models["isolation_forest"].predict(X_scaled)
         svm_preds = engine.models["one_class_svm"].predict(X_scaled)
 
-        # Autoencoder
         import numpy as np
         ae_recon = engine.models["autoencoder"].predict(X_scaled, verbose=0)
         ae_errors = np.mean(np.square(X_scaled - ae_recon), axis=1)
         ae_preds = (ae_errors > engine.ae_threshold).astype(int)
 
-        # Ensemble (majority vote: -1 = anomaly in sklearn convention)
+        # sklearn convention: -1 = anomaly; majority vote across 3 models
         if_anomaly = (if_preds == -1).astype(int)
         svm_anomaly = (svm_preds == -1).astype(int)
 
@@ -297,10 +276,9 @@ def _run_ml_predictions(df: pd.DataFrame) -> dict:
         total = len(df)
         pct = round((anomaly_count / total) * 100, 2) if total > 0 else 0
 
-        # Build anomalous entries
         anomalous = []
         anomaly_indices = np.where(ensemble == 1)[0]
-        for idx in anomaly_indices[:100]:  # Limit to 100
+        for idx in anomaly_indices[:100]:  # cap response size
             score = float(ae_errors[idx])
             risk = "Critical" if votes[idx] == 3 else "High" if votes[idx] == 2 else "Medium"
             anomalous.append({

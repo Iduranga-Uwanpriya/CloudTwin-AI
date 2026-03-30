@@ -15,7 +15,7 @@ from backend.app.auth import (
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-# ── Schemas ──────────────────────────────────────────────────
+#  Schemas 
 
 class SignupRequest(BaseModel):
     email: str
@@ -39,7 +39,7 @@ class UserResponse(BaseModel):
     is_active: bool
 
 
-# ── Endpoints ────────────────────────────────────────────────
+#  Endpoints 
 
 @router.post("/signup", response_model=TokenResponse, status_code=201)
 def signup(body: SignupRequest, db: Session = Depends(get_db)):

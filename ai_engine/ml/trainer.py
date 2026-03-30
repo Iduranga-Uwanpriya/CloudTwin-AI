@@ -40,20 +40,20 @@ from ai_engine.ml.models import (
     _ensure_dir,
 )
 
-# ---------------------------------------------------------------------------
+
 # Paths
-# ---------------------------------------------------------------------------
+
 DATA_DIR = Path(__file__).parent.parent / "data-sets"
 SAVED_MODELS_DIR = Path(__file__).parent.parent / "saved_models"
 EVAL_REPORT_PATH = SAVED_MODELS_DIR / "evaluation_report.json"
 
 
-# ---------------------------------------------------------------------------
+
 # Synthetic data generator (fallback when no real data available)
-# ---------------------------------------------------------------------------
+
 
 def generate_synthetic_data(n_normal: int = 2000, n_anomaly: int = 200,
-                            n_features: int = 10, seed: int = 42) -> tuple:
+        n_features: int = 10, seed: int = 42) -> tuple:
     """
     Generate synthetic cloud log data for training when no CSV data is available.
     Returns (X, y) where y: 1=normal, -1=anomaly.
@@ -74,9 +74,9 @@ def generate_synthetic_data(n_normal: int = 2000, n_anomaly: int = 200,
     return X[idx], y[idx]
 
 
-# ---------------------------------------------------------------------------
+
 # Training pipeline
-# ---------------------------------------------------------------------------
+
 
 def run_training_pipeline(data_dir: Optional[Path] = None,
                           model_dir: Optional[Path] = None,
@@ -100,9 +100,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
         "ensemble": {},
     }
 
-    # ------------------------------------------------------------------
+    
     # 1. Load data
-    # ------------------------------------------------------------------
+    
     print("=" * 60)
     print("CloudTwin AI - Anomaly Detection Training Pipeline")
     print("=" * 60)
@@ -148,9 +148,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
     print(f"      Features: {X.shape[1]}, Samples: {X.shape[0]}")
     print(f"      Normal: {int(np.sum(y == 1))}, Anomaly: {int(np.sum(y == -1))}")
 
-    # ------------------------------------------------------------------
+    
     # 2. Split data
-    # ------------------------------------------------------------------
+    
     print(f"\n[2/5] Splitting data (70/15/15)...")
     splits = split_data(X, y)
     X_train, X_val, X_test = splits["X_train"], splits["X_val"], splits["X_test"]
@@ -163,9 +163,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
     X_train_normal = X_train[normal_mask]
     print(f"      Training on {X_train_normal.shape[0]} normal samples (unsupervised)")
 
-    # ------------------------------------------------------------------
+    
     # 3. Train models
-    # ------------------------------------------------------------------
+    
     print(f"\n[3/5] Training models...")
 
     ensemble = EnsembleDetector(model_dir=model_dir)
@@ -175,9 +175,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
     train_time = time.time() - t0
     print(f"      Training completed in {train_time:.2f}s")
 
-    # ------------------------------------------------------------------
+    
     # 4. Evaluate
-    # ------------------------------------------------------------------
+    
     print(f"\n[4/5] Evaluating models...")
     evaluation = ensemble.evaluate(X_test, y_test)
 
@@ -210,9 +210,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
 
     report["training_time_seconds"] = round(train_time, 2)
 
-    # ------------------------------------------------------------------
+    
     # 5. Save models and report
-    # ------------------------------------------------------------------
+    
     print(f"\n[5/5] Saving models to {model_dir}...")
     ensemble.save()
 
@@ -227,9 +227,9 @@ def run_training_pipeline(data_dir: Optional[Path] = None,
     return report
 
 
-# ---------------------------------------------------------------------------
+
 # CLI entry point
-# ---------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     run_training_pipeline()

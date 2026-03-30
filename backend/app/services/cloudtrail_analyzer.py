@@ -11,7 +11,7 @@ from typing import Optional
 import boto3
 
 
-# ── Threat Rules ──────────────────────────────────────────────
+#  Threat Rules 
 
 THREAT_RULES = [
     {
@@ -143,25 +143,15 @@ THREAT_RULES = [
 ]
 
 
-# ── Analyzer ──────────────────────────────────────────────────
+# Analyzer 
 
 def analyze_cloudtrail(session: boto3.Session, hours: int = 24) -> dict:
-    """
-    Pull recent CloudTrail events and analyze for threats.
-
-    Args:
-        session: boto3 Session with cross-account credentials
-        hours: How many hours of history to analyze (default 24)
-
-    Returns:
-        Dict with threats, stats, and event summary
-    """
+    """Pull recent CloudTrail events and analyze for threats."""
     client = session.client("cloudtrail")
 
     start_time = datetime.now(timezone.utc) - timedelta(hours=hours)
     end_time = datetime.now(timezone.utc)
 
-    # Pull events
     events = []
     try:
         paginator = client.get_paginator("lookup_events")
@@ -171,7 +161,6 @@ def analyze_cloudtrail(session: boto3.Session, hours: int = 24) -> dict:
             MaxResults=50,
         ):
             for event in page.get("Events", []):
-                # Parse the CloudTrailEvent JSON
                 import json
                 try:
                     detail = json.loads(event.get("CloudTrailEvent", "{}"))
@@ -199,7 +188,6 @@ def analyze_cloudtrail(session: boto3.Session, hours: int = 24) -> dict:
             "total_events": 0,
         }
 
-    # Run threat rules
     threats = []
     for event in events:
         raw = event.get("_raw", {})
@@ -222,7 +210,6 @@ def analyze_cloudtrail(session: boto3.Session, hours: int = 24) -> dict:
             except Exception:
                 continue
 
-    # Stats
     severity_count = Counter(t["severity"] for t in threats)
     event_types = Counter(e["event_name"] for e in events)
     unique_ips = set(e["source_ip"] for e in events if e["source_ip"])

@@ -11,9 +11,9 @@ def generate_terraform(inventory: dict) -> str:
     Returns a string of valid Terraform configuration.
     """
     lines = [
-        '# =============================================================',
+        
         '# CloudTwin AI — Auto-generated Terraform from live AWS scan',
-        '# =============================================================',
+        
         '',
         'terraform {',
         '  required_providers {',
@@ -29,7 +29,7 @@ def generate_terraform(inventory: dict) -> str:
 
     resources = inventory.get("resources", {})
 
-    # ── S3 Buckets ────────────────────────────────────────────
+    #  S3 Buckets 
     for bucket in resources.get("s3", []):
         name = bucket["name"]
         safe = _safe_name(name)
@@ -74,7 +74,7 @@ def generate_terraform(inventory: dict) -> str:
             lines.append('}')
             lines.append('')
 
-    # ── EC2 Instances ─────────────────────────────────────────
+    #  EC2 Instances 
     for inst in resources.get("ec2", []):
         iid = inst["instance_id"]
         safe = _safe_name(iid)
@@ -92,7 +92,7 @@ def generate_terraform(inventory: dict) -> str:
         lines.append('}')
         lines.append('')
 
-    # ── Security Groups ───────────────────────────────────────
+    #  Security Groups 
     for sg in resources.get("security_groups", []):
         gid = sg["group_id"]
         safe = _safe_name(sg.get("group_name", gid))
@@ -113,7 +113,7 @@ def generate_terraform(inventory: dict) -> str:
         lines.append('}')
         lines.append('')
 
-    # ── VPC ────────────────────────────────────────────────────
+    # VPC 
     for vpc in resources.get("vpc", []):
         vid = vpc["vpc_id"]
         safe = _safe_name(vid)
@@ -128,7 +128,7 @@ def generate_terraform(inventory: dict) -> str:
         lines.append('}')
         lines.append('')
 
-    # ── RDS ────────────────────────────────────────────────────
+    #  RDS 
     for db in resources.get("rds", []):
         dbid = db["db_instance_id"]
         safe = _safe_name(dbid)

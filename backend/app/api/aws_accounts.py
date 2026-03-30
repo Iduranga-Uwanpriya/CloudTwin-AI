@@ -1,22 +1,45 @@
 """
 AWS Account management — connect, list, disconnect.
 """
+import re
+
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy.orm import Session
 
 from backend.app.db.session import get_db
-from backend.app.db.models import User, AwsAccount
+from backend.app.db.models import User, AwsAccount, ScanResult
 from backend.app.auth import get_current_user
 
 router = APIRouter(prefix="/aws-accounts", tags=["AWS Accounts"])
+ROLE_ARN_PATTERN = re.compile(
+    r"^arn:(aws|aws-us-gov|aws-cn):iam::\d{12}:role\/[\w+=,.@\-_/]+$"
+)
 
 
-# ── Schemas ──────────────────────────────────────────────────
+#  Schemas 
 
 class ConnectAwsRequest(BaseModel):
     account_alias: str       # friendly name, e.g. "Production"
     role_arn: str             # arn:aws:iam::123456789012:role/CloudTwinReadOnly
+
+    @field_validator("account_alias")
+    @classmethod
+    def validate_account_alias(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("Account alias is required")
+        return value
+
+    @field_validator("role_arn")
+    @classmethod
+    def validate_role_arn(cls, value: str) -> str:
+        value = value.strip()
+        if not ROLE_ARN_PATTERN.match(value):
+            raise ValueError(
+                "Role ARN must be in format: arn:aws:iam::123456789012:role/RoleName"
+            )
+        return value
 
 
 class AwsAccountResponse(BaseModel):
@@ -27,6 +50,7 @@ class AwsAccountResponse(BaseModel):
     aws_account_id: str | None
     is_active: bool
     last_scanned_at: str | None
+    compliance_score: float | None = None
 
 
 class OnboardingResponse(BaseModel):
@@ -35,7 +59,7 @@ class OnboardingResponse(BaseModel):
     setup_instructions: list[str]
 
 
-# ── Endpoints ────────────────────────────────────────────────
+#  Endpoints 
 
 @router.post("/connect", response_model=OnboardingResponse, status_code=201)
 def connect_aws_account(
@@ -91,7 +115,16 @@ def list_aws_accounts(
         .order_by(AwsAccount.created_at.desc())
         .all()
     )
-    return [_to_response(a) for a in accounts]
+    responses = []
+    for account in accounts:
+        latest_scan = (
+            db.query(ScanResult)
+            .filter(ScanResult.aws_account_id == account.id)
+            .order_by(ScanResult.created_at.desc())
+            .first()
+        )
+        responses.append(_to_response(account, latest_scan.overall_score if latest_scan else None))
+    return responses
 
 
 @router.delete("/{account_id}")
@@ -170,7 +203,7 @@ def get_cloudformation_template():
     return template
 
 
-def _to_response(account: AwsAccount) -> AwsAccountResponse:
+def _to_response(account: AwsAccount, compliance_score: float | None = None) -> AwsAccountResponse:
     return AwsAccountResponse(
         id=account.id,
         account_alias=account.account_alias,
@@ -179,4 +212,5 @@ def _to_response(account: AwsAccount) -> AwsAccountResponse:
         aws_account_id=account.aws_account_id,
         is_active=account.is_active,
         last_scanned_at=str(account.last_scanned_at) if account.last_scanned_at else None,
+        compliance_score=compliance_score,
     )

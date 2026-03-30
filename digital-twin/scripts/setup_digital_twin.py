@@ -9,7 +9,7 @@ import json
 import time
 from datetime import datetime, timezone
 
-# ==================== CONFIGURATION ====================
+#  CONFIGURATION 
 
 LOCALSTACK_ENDPOINT = "http://localhost:4566"
 AWS_REGION = "us-east-1"
@@ -28,7 +28,7 @@ def get_client(service: str):
     )
 
 
-# ==================== S3 BUCKET SETUP ====================
+#  S3 BUCKET SETUP 
 
 def create_compliant_bucket(s3, bucket_name: str):
     """Create a fully compliant S3 bucket with encryption, versioning, and access blocks."""
@@ -143,7 +143,7 @@ def setup_s3_buckets():
     print("    [+] Sample objects uploaded")
 
 
-# ==================== CLOUDTRAIL SETUP ====================
+#  CLOUDTRAIL SETUP 
 
 def setup_cloudtrail():
     """Configure CloudTrail for audit logging."""
@@ -170,7 +170,7 @@ def setup_cloudtrail():
         print(f"  [!] CloudTrail setup: {e}")
 
 
-# ==================== VPC / SECURITY GROUP SETUP ====================
+#  VPC / SECURITY GROUP SETUP 
 
 def setup_vpc_and_security_groups():
     """Create VPC with compliant and non-compliant security groups."""
@@ -248,7 +248,7 @@ def setup_vpc_and_security_groups():
         print(f"  [!] Non-compliant SG: {e}")
 
 
-# ==================== SAMPLE CLOUDTRAIL EVENTS ====================
+#  SAMPLE CLOUDTRAIL EVENTS 
 
 def generate_sample_cloudtrail_events():
     """Generate sample CloudTrail-style events for testing."""
@@ -322,7 +322,7 @@ def generate_sample_cloudtrail_events():
     print(f"  [+] {len(events)} sample CloudTrail events generated")
 
 
-# ==================== MAIN ====================
+#  MAIN 
 
 def main():
     print("=" * 50)

@@ -2,6 +2,16 @@ import React, { useState, useEffect } from "react";
 import { awsAccounts, scanner } from "../services/api";
 import "./AwsConnect.css";
 
+function formatApiError(err, fallback = "Request failed") {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const messages = detail.map((item) => item?.msg).filter(Boolean);
+    if (messages.length > 0) return messages.join(", ");
+  }
+  return fallback;
+}
+
 export default function AwsConnect() {
   const [accounts, setAccounts] = useState([]);
   const [alias, setAlias] = useState("");
@@ -54,7 +64,7 @@ export default function AwsConnect() {
       setRoleArn("");
       loadAccounts();
     } catch (e) {
-      setError(e.response?.data?.detail || "Failed to connect");
+      setError(formatApiError(e, "Failed to connect"));
     } finally {
       setConnecting(false);
     }
@@ -71,7 +81,7 @@ export default function AwsConnect() {
     } catch (e) {
       setScanResults((r) => ({
         ...r,
-        [accountId]: { error: e.response?.data?.detail || "Scan failed" },
+        [accountId]: { error: formatApiError(e, "Scan failed") },
       }));
     } finally {
       setScanning((s) => ({ ...s, [accountId]: false }));
@@ -86,7 +96,7 @@ export default function AwsConnect() {
     } catch (e) {
       setCloneResults((r) => ({
         ...r,
-        [accountId]: { error: e.response?.data?.detail || "Clone failed" },
+        [accountId]: { error: formatApiError(e, "Clone failed") },
       }));
     } finally {
       setCloning((s) => ({ ...s, [accountId]: false }));

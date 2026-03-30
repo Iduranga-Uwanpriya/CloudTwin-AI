@@ -5,6 +5,15 @@ import { awsAccounts, scanner, compliance } from "../services/api";
 import "./Compliance.css";
 
 const SEVERITY_COLOR = { critical: "#f85149", high: "#d29922", medium: "#58a6ff", low: "#3fb950" };
+function formatApiError(err, fallback = "Request failed") {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail) && detail.length > 0) {
+    const messages = detail.map((item) => item?.msg).filter(Boolean);
+    if (messages.length > 0) return messages.join(", ");
+  }
+  return fallback;
+}
 
 export default function Compliance() {
   const [accounts, setAccounts] = useState([]);
@@ -61,7 +70,7 @@ export default function Compliance() {
       const { data } = await scanner.findings(scanId);
       setFindings(data);
     } catch (e) {
-      setError(e.response?.data?.detail || "Failed to load scan findings");
+      setError(formatApiError(e, "Failed to load scan findings"));
       setFindings(null);
     } finally {
       setFindingsLoading(false);
@@ -76,7 +85,7 @@ export default function Compliance() {
       const { data } = await compliance.scanTerraform(tfFile);
       setTfResults(data.results || data);
     } catch (e) {
-      setError(e.response?.data?.detail || "Terraform scan failed");
+      setError(formatApiError(e, "Terraform scan failed"));
     } finally {
       setTfLoading(false);
     }

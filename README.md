@@ -4,17 +4,17 @@
 
 ---
 
-## 🎯 Overview
+##  Overview
 
 CloudTwin AI is an intelligent cloud compliance platform that creates a digital twin of your AWS infrastructure, automatically checks compliance against security standards, and uses AI to detect anomalies.
 
 ### Key Features
-- 🏗️ **Digital Twin**: Simulates AWS infrastructure using LocalStack
-- 📝 **IaC Parsing**: Analyzes Terraform configurations
-- ✅ **Compliance Engine**: Automated security checks
-- 🔐 **Blockchain Audit**: Tamper-proof compliance logging
-- 🤖 **AI Anomaly Detection**: ML-powered threat detection (in development)
-- 🔧 **Auto-Remediation**: Automated security fixes (in development)
+-  **Digital Twin**: Simulates AWS infrastructure using LocalStack
+-  **IaC Parsing**: Analyzes Terraform configurations
+-  **Compliance Engine**: Automated security checks
+-  **Blockchain Audit**: Tamper-proof compliance logging
+-  **AI Anomaly Detection**: ML-powered threat detection (in development)
+-  **Auto-Remediation**: Automated security fixes (in development)
 
 ---
 
@@ -64,7 +64,7 @@ cloudtwin-ai/
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Python 3.11+
@@ -110,7 +110,7 @@ python  uvicorn backend.app.main:app --reload
 
 ---
 
-## 📊 Usage
+##  Usage
 
 ### Deploy & Check Compliance
 
@@ -134,7 +134,7 @@ python  uvicorn backend.app.main:app --reload
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ### Sample Files
 
@@ -166,7 +166,7 @@ pytest tests/
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 - **[Architecture Guide](docs/ARCHITECTURE.md)** - System design & components
 - **[API Reference](docs/API.md)** - Endpoint documentation
@@ -175,7 +175,7 @@ pytest tests/
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 This is an academic project. For questions or suggestions:
 - Open an issue
@@ -184,13 +184,13 @@ This is an academic project. For questions or suggestions:
 
 ---
 
-## 📄 License
+##  License
 
 Academic Project © 2025
 
 ---
 
-## 👤 Author
+##  Author
 
 **Iduranga Kekualndara**  
 Final Year Dissertation Project  
@@ -199,7 +199,7 @@ Supervisor: Buddhika remarathne
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - AWS for cloud infrastructure concepts
 - LocalStack for local AWS emulation

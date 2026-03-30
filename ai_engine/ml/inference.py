@@ -22,14 +22,14 @@ from typing import List, Dict, Optional, Tuple
 import numpy as np
 import joblib
 
-# ---------------------------------------------------------------------------
+
 # Paths
-# ---------------------------------------------------------------------------
+
 SAVED_MODELS_DIR = Path(__file__).parent.parent / "saved_models"
 
-# ---------------------------------------------------------------------------
-# UNSW-NB15 feature columns (must match training notebook)
-# ---------------------------------------------------------------------------
+
+# UNSW-NB15 feature columns 
+
 NUMERIC_FEATURES = [
     "dur", "sbytes", "dbytes", "sttl", "dttl", "sloss", "dloss",
     "sload", "dload", "spkts", "dpkts", "sinpkt", "dinpkt",
@@ -63,9 +63,9 @@ class AnomalyInferenceEngine:
         self.feature_names = None
         self._loaded = False
 
-    # ------------------------------------------------------------------
+    
     # Model loading
-    # ------------------------------------------------------------------
+    
 
     def load_models(self) -> "AnomalyInferenceEngine":
         """Load all saved model artifacts."""
@@ -77,13 +77,13 @@ class AnomalyInferenceEngine:
             raise FileNotFoundError(f"Isolation Forest model not found: {if_path}")
         self.if_model = joblib.load(if_path)
 
-        # One-Class SVM
+        # OneClass SVM
         svm_path = model_dir / "one_class_svm.joblib"
         if not svm_path.exists():
             raise FileNotFoundError(f"One-Class SVM model not found: {svm_path}")
         self.svm_model = joblib.load(svm_path)
 
-        # Autoencoder (Keras)
+        # Autoencoder 
         ae_path = model_dir / "autoencoder.keras"
         if not ae_path.exists():
             raise FileNotFoundError(f"Autoencoder model not found: {ae_path}")
@@ -129,9 +129,9 @@ class AnomalyInferenceEngine:
         ]
         return all((self.model_dir / f).exists() for f in required)
 
-    # ------------------------------------------------------------------
+    
     # Preprocessing (mirrors notebook's preprocess() function)
-    # ------------------------------------------------------------------
+    
 
     def preprocess(self, df) -> np.ndarray:
         """
@@ -158,7 +158,7 @@ class AnomalyInferenceEngine:
                 mode = df[col].mode()
                 df[col] = df[col].fillna(mode[0] if not mode.empty else "unknown")
 
-        # 2. One-hot encode
+        # 2. Onehot encode
         encode_cols = [c for c in ["proto", "service", "state"] if c in df.columns]
         if encode_cols:
             df = pd.get_dummies(df, columns=encode_cols, drop_first=False)
@@ -167,7 +167,7 @@ class AnomalyInferenceEngine:
         df.replace([np.inf, -np.inf], np.nan, inplace=True)
         df.fillna(0, inplace=True)
 
-        # 4. Drop non-feature columns
+        # 4. Drop nonfeature columns
         drop_cols = [c for c in ["label", "attack_cat", "id"] if c in df.columns]
         if drop_cols:
             df = df.drop(columns=drop_cols)
@@ -185,9 +185,9 @@ class AnomalyInferenceEngine:
 
         return X
 
-    # ------------------------------------------------------------------
+    
     # Prediction
-    # ------------------------------------------------------------------
+    
 
     def predict(self, X: np.ndarray) -> Dict:
         """
@@ -208,7 +208,7 @@ class AnomalyInferenceEngine:
         svm_pred = self.svm_model.predict(X)
         svm_anomaly = (svm_pred == -1).astype(int)
 
-        # Autoencoder: reconstruction error > threshold = anomaly
+        # Autoencoder: reconstruction error means threshold = anomaly
         ae_recon = self.ae_model.predict(X, verbose=0)
         ae_errors = np.mean(np.square(X - ae_recon), axis=1)
         ae_anomaly = (ae_errors > self.ae_threshold).astype(int)
@@ -260,9 +260,9 @@ class AnomalyInferenceEngine:
             "anomaly_percentage": round(anomaly_count / n * 100, 2) if n > 0 else 0,
         }
 
-    # ------------------------------------------------------------------
+    
     # High-level API (CSV in, results out)
-    # ------------------------------------------------------------------
+    
 
     def predict_from_csv(self, csv_text: str) -> Dict:
         """
@@ -348,9 +348,9 @@ class AnomalyInferenceEngine:
         return response
 
 
-# ---------------------------------------------------------------------------
+
 # Module-level singleton for the API layer
-# ---------------------------------------------------------------------------
+
 _engine: Optional[AnomalyInferenceEngine] = None
 
 
