@@ -166,14 +166,7 @@ pytest tests/
 
 ---
 
-##  Documentation
 
-- **[Architecture Guide](docs/ARCHITECTURE.md)** - System design & components
-- **[API Reference](docs/API.md)** - Endpoint documentation
-- **[Development Guide](docs/DEVELOPMENT.md)** - Setup & contribution
-- **[Demo Guide](docs/DEMO.md)** - Presentation walkthrough
-
----
 
 ##  Contributing
 

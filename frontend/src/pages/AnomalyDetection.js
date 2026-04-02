@@ -97,7 +97,7 @@ export default function AnomalyDetection() {
         CloudTrail threat analysis + ML-based network anomaly detection
       </p>
 
-      {/* ── CloudTrail Threat Analysis ─────────────────────── */}
+      {/*  CloudTrail Threat Analysis  */}
       <div className="section-divider">
         <h2 className="section-title">CloudTrail Threat Analysis</h2>
         <p className="section-sub">Real-time detection of suspicious AWS API activity</p>
@@ -269,7 +269,7 @@ export default function AnomalyDetection() {
         </>
       )}
 
-      {/* ── ML Network Anomaly Detection (Live VPC Flow Logs) ──── */}
+      {/*  ML Network Anomaly Detection (Live VPC Flow Logs)  */}
       <div className="section-divider" style={{ marginTop: "2.5rem" }}>
         <h2 className="section-title">ML Network Anomaly Detection</h2>
         <p className="section-sub">
@@ -515,7 +515,7 @@ export default function AnomalyDetection() {
         </>
       )}
 
-      {/* ── CSV Upload (Manual) ────────────────────────────────── */}
+      {/*  CSV Upload (Manual)  */}
       <div className="section-divider" style={{ marginTop: "2.5rem" }}>
         <h2 className="section-title">Manual CSV Analysis</h2>
         <p className="section-sub">Upload UNSW-NB15 format CSV for offline anomaly detection</p>
